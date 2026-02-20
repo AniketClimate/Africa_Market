@@ -1,0 +1,2441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Halla Health | Africa Market Entry Dashboard v3</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap');
+:root{
+  --sand:#F5EDD8;--sand-dark:#EAD9B8;--ochre:#C8822A;--ochre-light:#E09A3C;
+  --ochre-dark:#A06519;--rust:#B94A2C;--forest:#2D5A3D;--forest-light:#3E7A55;
+  --sky:#1A6E8E;--ink:#1C1610;--ink-light:#2E261A;--smoke:#6B5F4E;
+  --smoke-light:#8A7A66;--cream:#FDFAF4;--radius:12px;--radius-lg:20px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:14px;font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--sand);scroll-behavior:smooth;}
+body{min-height:100vh;}
+
+/* HEADER */
+header{background:var(--ink);padding:0 2rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 24px rgba(0,0,0,.3);}
+.header-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px;flex-wrap:wrap;gap:.5rem;padding:.5rem 0;}
+.logo{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--ochre-light);}
+.logo span{color:#FDFAF4;font-weight:400;font-style:italic;font-size:.8em;margin-left:.4em;}
+nav{display:flex;gap:.25rem;flex-wrap:wrap;}
+.nav-btn{background:transparent;border:none;color:#8A7A66;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;padding:.4rem .85rem;border-radius:8px;cursor:pointer;transition:all .2s;}
+.nav-btn:hover{color:#F5EDD8;background:rgba(255,255,255,.07);}
+.nav-btn.active{background:var(--ochre);color:#FDFAF4;}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--ink) 0%,var(--ink-light) 40%,#3A2810 100%);padding:2.5rem 2rem;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23C8822A' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");}
+.hero-inner{max-width:1400px;margin:0 auto;position:relative;}
+.hero h1{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;color:#F5EDD8;line-height:1.1;margin-bottom:.4rem;}
+.hero h1 em{color:var(--ochre-light);font-style:normal;}
+.hero p{color:#8A7A66;font-weight:300;font-size:.9rem;max-width:600px;margin-bottom:1.5rem;}
+.hero-sources{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;}
+.source-tag{font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;padding:.2rem .55rem;border-radius:4px;border:1px solid rgba(200,130,42,.3);color:var(--ochre-light);}
+.summary-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:1.5rem;}
+.summary-card{background:rgba(255,255,255,.05);border:1px solid rgba(200,130,42,.2);border-radius:var(--radius);padding:1.1rem 1.4rem;backdrop-filter:blur(4px);}
+.summary-card .label{font-size:.7rem;font-weight:500;color:#8A7A66;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem;}
+.summary-card .value{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--ochre-light);line-height:1;}
+.summary-card .sub{font-size:.7rem;color:#8A7A66;margin-top:.2rem;}
+
+/* MAIN */
+main{max-width:1400px;margin:0 auto;padding:2rem;}
+.tab-panel{display:none;}.tab-panel.active{display:block;}
+.section-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--ink);margin-bottom:.25rem;}
+.section-sub{color:var(--smoke);font-size:.8rem;margin-bottom:1.25rem;}
+
+/* CARDS */
+.card{background:var(--cream);border:1px solid var(--sand-dark);border-radius:var(--radius-lg);box-shadow:0 2px 12px rgba(28,22,16,.06);overflow:hidden;transition:box-shadow .2s;}
+.card:hover{box-shadow:0 6px 24px rgba(28,22,16,.1);}
+.card-body{padding:1.25rem 1.5rem;}
+.card-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--ink);margin-bottom:.85rem;}
+
+/* GRIDS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;}
+.mt-5{margin-top:1.25rem;}.mt-6{margin-top:1.5rem;}
+
+/* LEGEND FOR ESTIMATED */
+.est-legend{display:inline-flex;align-items:center;gap:.35rem;font-size:.72rem;color:var(--smoke);margin-bottom:.75rem;}
+.est-dot{width:8px;height:8px;border-radius:50%;background:var(--ochre);opacity:.7;flex-shrink:0;}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:.78rem;}
+thead th{background:var(--ink);color:#F5EDD8;font-weight:600;text-align:left;padding:.65rem .9rem;font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;}
+tbody td{padding:.65rem .9rem;border-bottom:1px solid var(--sand-dark);color:var(--ink-light);vertical-align:middle;}
+tbody tr:hover td{background:rgba(200,130,42,.05);}
+tbody tr:last-child td{border-bottom:none;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:.18rem .55rem;border-radius:999px;font-size:.65rem;font-weight:600;letter-spacing:.03em;white-space:nowrap;}
+.badge-high{background:rgba(45,90,61,.12);color:#2D5A3D;border:1px solid rgba(45,90,61,.25);}
+.badge-medium{background:rgba(200,130,42,.12);color:var(--ochre-dark);border:1px solid rgba(200,130,42,.25);}
+.badge-low{background:rgba(185,74,44,.12);color:var(--rust);border:1px solid rgba(185,74,44,.25);}
+.badge-longterm{background:rgba(107,95,78,.1);color:var(--smoke);border:1px solid rgba(107,95,78,.2);}
+
+/* ESTIMATED MARKER */
+.est{color:var(--ochre);font-size:.65rem;vertical-align:super;margin-left:1px;font-weight:700;}
+
+/* SCORE BAR */
+.score-bar{flex:1;height:6px;background:var(--sand-dark);border-radius:999px;overflow:hidden;}
+.score-bar-fill{height:100%;border-radius:999px;}
+.score-bar-wrap{display:flex;align-items:center;gap:.45rem;}
+
+/* SOURCE CHIP */
+.source-chip{font-size:.62rem;color:var(--smoke);font-style:italic;}
+
+/* CHARTS */
+.chart-wrap{position:relative;width:100%;}
+.h280{height:280px;}.h320{height:320px;}.h380{height:380px;}.h420{height:420px;}
+
+/* FORM */
+.form-label{display:block;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--smoke);margin-bottom:.45rem;}
+.form-group{margin-bottom:1.1rem;}
+.select-single,.select-multi{width:100%;border:1px solid var(--sand-dark);border-radius:var(--radius);padding:.55rem .9rem;background:var(--cream);color:var(--ink);font-size:.85rem;outline:none;transition:border-color .15s;font-family:'DM Sans',sans-serif;}
+.select-single{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231C1610' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:16px;padding-right:2.5rem;}
+.select-single:focus,.select-multi:focus{border-color:var(--ochre);}
+.select-multi{height:200px;}
+
+.btn{display:inline-flex;align-items:center;gap:.35rem;padding:.45rem .9rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;border:none;transition:all .2s;}
+.btn-ochre{background:var(--ochre);color:#FDFAF4;}.btn-ochre:hover{background:var(--ochre-dark);}
+.btn-outline{background:transparent;border:1px solid var(--sand-dark);color:var(--ink);}.btn-outline:hover{background:var(--sand-dark);}
+
+/* PROFILE GRID */
+.profile-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1rem;}
+.profile-block h4{font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--ochre-dark);border-bottom:2px solid var(--ochre-light);padding-bottom:.3rem;margin-bottom:.65rem;}
+.profile-row{display:flex;justify-content:space-between;margin-bottom:.35rem;font-size:.78rem;}
+.profile-row .pkey{color:var(--smoke);}
+.profile-row .pval{font-weight:600;color:var(--ink);}
+
+/* COUNTRY DETAIL SECTION */
+.detail-section{background:var(--sand);border:1px solid var(--sand-dark);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:.85rem;}
+.detail-section h4{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ochre-dark);margin-bottom:.5rem;}
+.detail-section ul{list-style:none;padding:0;}
+.detail-section ul li{font-size:.78rem;color:var(--ink-light);padding:.25rem 0;border-bottom:1px solid var(--sand-dark);display:flex;gap:.4rem;align-items:flex-start;}
+.detail-section ul li:last-child{border-bottom:none;}
+.detail-section ul li .bullet{color:var(--ochre);flex-shrink:0;margin-top:.05rem;}
+.org-tag{display:inline-flex;align-items:center;font-size:.7rem;font-weight:500;padding:.2rem .5rem;border-radius:4px;background:rgba(45,90,61,.1);color:var(--forest);border:1px solid rgba(45,90,61,.2);margin:.15rem;}
+
+/* INSIGHTS */
+.phase-card{border-left:4px solid var(--ochre);background:var(--cream);border-radius:0 var(--radius) var(--radius) 0;padding:1.1rem 1.4rem;margin-bottom:.85rem;box-shadow:0 2px 8px rgba(28,22,16,.05);}
+.phase-card.green{border-left-color:var(--forest);}
+.phase-card.rust{border-left-color:var(--rust);}
+.phase-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.65rem;flex-wrap:wrap;gap:.4rem;}
+.phase-head h3{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--ink);}
+.phase-tag{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .55rem;border-radius:4px;}
+.tag-now{background:var(--forest);color:#FDFAF4;}.tag-soon{background:var(--ochre);color:#FDFAF4;}.tag-later{background:var(--rust);color:#FDFAF4;}
+.phase-content p{font-size:.78rem;color:var(--smoke);line-height:1.6;margin-bottom:.4rem;}
+.country-tags{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.4rem;}
+.ctag{font-size:.66rem;font-weight:600;padding:.18rem .5rem;border-radius:4px;background:var(--sand);border:1px solid var(--sand-dark);color:var(--ink-light);}
+
+.risk-row{display:grid;grid-template-columns:34px 1fr;gap:.65rem;padding:.75rem 0;border-bottom:1px solid var(--sand-dark);align-items:start;}
+.risk-row:last-child{border-bottom:none;}
+.risk-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;}
+.risk-icon.orange{background:rgba(200,130,42,.12);}.risk-icon.red{background:rgba(185,74,44,.12);}.risk-icon.green{background:rgba(45,90,61,.12);}
+.risk-title{font-weight:600;font-size:.82rem;color:var(--ink);margin-bottom:.2rem;}
+.risk-desc{font-size:.76rem;color:var(--smoke);line-height:1.5;}
+
+/* FUNDING LANDSCAPE STYLES */
+.fl-hero{background:linear-gradient(135deg,#0F2A1E 0%,#1A3D2A 60%,#1C2F18 100%);border-radius:var(--radius-lg);padding:1.75rem 2rem;margin-bottom:1.5rem;position:relative;overflow:hidden;}
+.fl-hero::after{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%232D5A3D' fill-opacity='0.08'%3E%3Ccircle cx='40' cy='40' r='25'/%3E%3Ccircle cx='0' cy='0' r='12'/%3E%3Ccircle cx='80' cy='80' r='12'/%3E%3C/g%3E%3C/svg%3E");pointer-events:none;}
+.fl-hero-inner{position:relative;z-index:1;}
+.fl-hero h2{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:#F5EDD8;margin-bottom:.35rem;}
+.fl-hero h2 em{color:#4ABA7A;font-style:normal;}
+.fl-hero p{color:#7AA88A;font-size:.82rem;max-width:820px;line-height:1.6;}
+.fl-hero-stats{display:flex;gap:2rem;margin-top:1.25rem;flex-wrap:wrap;}
+.fl-stat{text-align:center;}
+.fl-stat .fv{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#4ABA7A;line-height:1;}
+.fl-stat .fl{font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:#7AA88A;margin-top:.2rem;}
+
+.fl-filter-bar{display:flex;gap:.5rem;margin-bottom:1.25rem;flex-wrap:wrap;align-items:center;}
+.fl-filter-label{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--smoke);margin-right:.25rem;}
+.fl-chip{padding:.32rem .75rem;border-radius:999px;font-size:.72rem;font-weight:600;cursor:pointer;border:1px solid var(--sand-dark);background:var(--cream);color:var(--smoke);transition:all .18s;}
+.fl-chip:hover{border-color:var(--ochre);color:var(--ochre-dark);}
+.fl-chip.active{background:var(--ink);color:#F5EDD8;border-color:var(--ink);}
+.fl-chip.cat-multi{background:rgba(45,90,61,.1);color:var(--forest);border-color:rgba(45,90,61,.3);}
+.fl-chip.cat-multi.active{background:var(--forest);color:#fff;border-color:var(--forest);}
+.fl-chip.cat-phil{background:rgba(200,130,42,.1);color:var(--ochre-dark);border-color:rgba(200,130,42,.3);}
+.fl-chip.cat-phil.active{background:var(--ochre);color:#fff;border-color:var(--ochre);}
+.fl-chip.cat-africa{background:rgba(185,74,44,.1);color:var(--rust);border-color:rgba(185,74,44,.3);}
+.fl-chip.cat-africa.active{background:var(--rust);color:#fff;border-color:var(--rust);}
+.fl-chip.cat-corp{background:rgba(26,110,142,.1);color:var(--sky);border-color:rgba(26,110,142,.3);}
+.fl-chip.cat-corp.active{background:var(--sky);color:#fff;border-color:var(--sky);}
+.fl-chip.cat-impl{background:rgba(107,95,78,.1);color:var(--smoke);border-color:rgba(107,95,78,.3);}
+.fl-chip.cat-impl.active{background:var(--smoke);color:#fff;border-color:var(--smoke);}
+
+.fl-group{margin-bottom:1.75rem;}
+.fl-group-header{display:flex;align-items:center;gap:.75rem;padding:.65rem 1rem;border-radius:var(--radius) var(--radius) 0 0;margin-bottom:0;}
+.fl-group-header h3{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:#F5EDD8;margin:0;}
+.fl-group-header .fl-count{font-size:.68rem;background:rgba(255,255,255,.2);color:#F5EDD8;padding:.12rem .45rem;border-radius:999px;font-weight:600;}
+.fl-group-body{border:1px solid var(--sand-dark);border-top:none;border-radius:0 0 var(--radius) var(--radius);overflow:hidden;}
+
+.fl-card{background:var(--cream);border-bottom:1px solid var(--sand-dark);display:grid;grid-template-columns:56px 1fr;transition:background .15s;}
+.fl-card:last-child{border-bottom:none;}
+.fl-card:hover{background:rgba(200,130,42,.04);}
+.fl-card-icon{display:flex;align-items:flex-start;justify-content:center;padding:1.1rem .5rem 1.1rem 1rem;font-size:1.5rem;}
+.fl-card-body{padding:1rem 1.25rem 1rem 0;}
+.fl-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;flex-wrap:wrap;margin-bottom:.45rem;}
+.fl-card-name{font-weight:700;font-size:.9rem;color:var(--ink);font-family:'Playfair Display',serif;}
+.fl-card-name small{font-family:'DM Sans',sans-serif;font-weight:400;font-size:.72rem;color:var(--smoke);margin-left:.35rem;}
+.fl-card-amount{font-size:.75rem;font-weight:700;color:var(--forest);background:rgba(45,90,61,.1);padding:.18rem .55rem;border-radius:4px;white-space:nowrap;border:1px solid rgba(45,90,61,.2);}
+.fl-card-desc{font-size:.78rem;color:var(--smoke);line-height:1.55;margin-bottom:.6rem;}
+.fl-card-tags{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.5rem;}
+.fl-tag{font-size:.64rem;font-weight:600;padding:.15rem .45rem;border-radius:4px;}
+.fl-tag-halla{background:rgba(26,110,142,.12);color:var(--sky);border:1px solid rgba(26,110,142,.25);}
+.fl-tag-chip{background:rgba(45,90,61,.12);color:var(--forest);border:1px solid rgba(45,90,61,.25);}
+.fl-tag-both{background:linear-gradient(90deg,rgba(26,110,142,.12),rgba(45,90,61,.12));color:#1A5A3E;border:1px solid rgba(45,90,61,.2);}
+.fl-card-countries{display:flex;flex-wrap:wrap;gap:.25rem;margin-top:.35rem;}
+.fl-country-pill{font-size:.63rem;font-weight:500;padding:.1rem .4rem;border-radius:3px;background:var(--sand);border:1px solid var(--sand-dark);color:var(--ink-light);}
+.fl-action{font-size:.72rem;font-weight:600;color:var(--ochre-dark);margin-top:.5rem;display:flex;align-items:center;gap:.3rem;}
+.fl-action::before{content:'→';color:var(--ochre);}
+
+.fl-search{width:100%;border:1px solid var(--sand-dark);border-radius:var(--radius);padding:.6rem 1rem;font-size:.85rem;font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--cream);outline:none;transition:border-color .15s;margin-bottom:1rem;}
+.fl-search:focus{border-color:var(--ochre);}
+.fl-search::placeholder{color:var(--smoke-light);}
+.fl-empty{text-align:center;padding:3rem;color:var(--smoke);font-style:italic;}
+
+.focus-pill{display:inline-flex;align-items:center;gap:.3rem;font-size:.65rem;font-weight:700;padding:.18rem .5rem;border-radius:999px;text-transform:uppercase;letter-spacing:.05em;}
+.focus-halla{background:rgba(26,110,142,.15);color:var(--sky);border:1px solid rgba(26,110,142,.3);}
+.focus-chip{background:rgba(45,90,61,.15);color:var(--forest);border:1px solid rgba(45,90,61,.3);}
+.focus-both{background:linear-gradient(90deg,rgba(26,110,142,.15),rgba(45,90,61,.15));color:#1A5068;border:1px solid rgba(45,90,61,.25);}
+
+@media(max-width:640px){.fl-card{grid-template-columns:1fr;}.fl-card-icon{padding:.75rem 1rem .25rem;}.fl-card-body{padding:.75rem 1rem;}}
+.stats-strip{display:flex;gap:1px;background:var(--sand-dark);border-radius:var(--radius);overflow:hidden;margin-bottom:1.25rem;}
+.stat-item{flex:1;background:var(--cream);padding:.8rem .9rem;text-align:center;}
+.stat-item .sv{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--ochre);}
+.stat-item .sl{font-size:.65rem;text-transform:uppercase;letter-spacing:.06em;color:var(--smoke);margin-top:.12rem;}
+
+/* SOURCE FOOTER */
+.source-footer{background:var(--ink-light);padding:1.25rem 2rem;margin-top:2rem;}
+.source-footer-inner{max-width:1400px;margin:0 auto;}
+.source-footer h3{font-family:'Playfair Display',serif;font-size:1rem;color:var(--ochre-light);margin-bottom:.75rem;}
+.source-list{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;}
+.source-item{font-size:.72rem;color:#8A7A66;}
+.source-item a{color:var(--ochre-light);text-decoration:none;}
+.source-item a:hover{text-decoration:underline;}
+
+@media(max-width:1024px){
+  .summary-strip,.grid-2,.grid-3{grid-template-columns:1fr 1fr;}
+  .profile-grid{grid-template-columns:1fr 1fr;}
+  .source-list{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:640px){
+  .hero h1{font-size:1.5rem;}
+  .summary-strip{grid-template-columns:1fr 1fr;}
+  .grid-2,.grid-3{grid-template-columns:1fr;}
+  .source-list{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">Halla Health <span>Africa v3 — Verified Data</span></div>
+    <nav>
+      <button class="nav-btn active" data-tab="overview">Overview</button>
+      <button class="nav-btn" data-tab="analysis">Country Analysis</button>
+      <button class="nav-btn" data-tab="comparison">Compare</button>
+      <button class="nav-btn" data-tab="funding">Funding Landscape</button>
+      <button class="nav-btn" data-tab="insights">Strategy</button>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <h1>Africa Market Entry<br><em>Intelligence Dashboard</em></h1>
+    <p>Real-data rebuild using World Bank, ITU, WHO, GSMA & DataReportal. Fields marked <span style="color:var(--ochre-light);font-weight:700">★</span> are estimated where verified data is unavailable.</p>
+    <div class="hero-sources">
+      <span class="source-tag">World Bank 2023</span>
+      <span class="source-tag">ITU 2024</span>
+      <span class="source-tag">WHO GHED 2023</span>
+      <span class="source-tag">GSMA 2024</span>
+      <span class="source-tag">DataReportal 2024</span>
+      <span class="source-tag">UN WPP 2024</span>
+      <span class="source-tag">UNDP NDC Data 2024</span>
+    </div>
+    <div class="summary-strip">
+      <div class="summary-card"><div class="label">Countries Analyzed</div><div class="value">54</div><div class="sub">All UN-recognised African states</div></div>
+      <div class="summary-card"><div class="label">Total Population</div><div class="value" id="metPop">—</div><div class="sub">Million (UN WPP 2024)</div></div>
+      <div class="summary-card"><div class="label">Avg Internet Penetration</div><div class="value" id="metInternet">—</div><div class="sub">ITU 2024 avg: 38% for Africa</div></div>
+      <div class="summary-card"><div class="label">Top Market Score</div><div class="value" id="metTop">—</div><div class="sub">Composite index /10</div></div>
+    </div>
+  </div>
+</div>
+
+<main>
+
+<!-- ═══ OVERVIEW ═══ -->
+<div class="tab-panel active" id="tab-overview">
+  <div class="section-title">Market Landscape</div>
+  <div class="section-sub">Priority classification across all 54 African markets · <span class="est-dot" style="display:inline-block;"></span> <span style="font-size:.72rem;color:var(--smoke)">★ = estimated field (no verified source available)</span></div>
+
+  <div class="stats-strip">
+    <div class="stat-item"><div class="sv" id="statHigh">—</div><div class="sl">High Priority</div></div>
+    <div class="stat-item"><div class="sv" id="statMed">—</div><div class="sl">Medium Priority</div></div>
+    <div class="stat-item"><div class="sv" id="statLow">—</div><div class="sl">Low Priority</div></div>
+    <div class="stat-item"><div class="sv" id="statLT">—</div><div class="sl">Long-term Focus</div></div>
+    <div class="stat-item"><div class="sv">5</div><div class="sl">Sub-Regions</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card"><div class="card-body"><div class="card-title">Priority Distribution</div><div class="chart-wrap h280"><canvas id="priorityPie"></canvas></div></div></div>
+    <div class="card"><div class="card-body"><div class="card-title">Top 12 Markets by Score</div><div class="chart-wrap h280"><canvas id="topChart"></canvas></div></div></div>
+  </div>
+
+  <div class="card mt-6">
+    <div class="card-body">
+      <div class="card-title">All 54 Countries — Ranked by Market Attractiveness</div>
+      <div class="est-legend"><div class="est-dot"></div> ★ indicates estimated value · GNI source: World Bank Atlas Method 2023 · Internet: ITU/DataReportal 2024 · Population: UN WPP 2024</div>
+      <div class="table-wrap">
+        <table id="mainTable">
+          <thead><tr>
+            <th>#</th><th>Country</th><th>Region</th>
+            <th>Pop (M)</th><th>GNI/cap (USD)</th>
+            <th>Internet %</th><th>Mobile %</th>
+            <th>Health Spend/cap</th><th>Market Score</th><th>Priority</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ COUNTRY ANALYSIS ═══ -->
+<div class="tab-panel" id="tab-analysis">
+  <div class="section-title">Country Deep-Dive</div>
+  <div class="section-sub">Verified metrics + Government initiatives, Climate budget, and key partnership organisations</div>
+  <div class="form-group">
+    <label class="form-label">Select Country</label>
+    <select class="select-single" id="countrySelect"></select>
+  </div>
+
+  <div id="countryProfileArea" style="display:none;">
+    <div class="card"><div class="card-body" id="countryProfileContent"></div></div>
+
+    <div class="grid-2 mt-5">
+      <div class="card"><div class="card-body"><div class="card-title">Performance Radar</div><div class="chart-wrap h380"><canvas id="radarChart"></canvas></div></div></div>
+      <div class="card"><div class="card-body" id="scoreBarsContent"><div class="card-title">Metric Breakdown</div></div></div>
+    </div>
+
+    <!-- NEW: Initiatives / Climate / Partners -->
+    <div class="grid-3 mt-5" id="detailPanels"></div>
+  </div>
+</div>
+
+<!-- ═══ COMPARISON ═══ -->
+<div class="tab-panel" id="tab-comparison">
+  <div class="section-title">Side-by-Side Comparison</div>
+  <div class="section-sub">Select 2–5 countries · starred fields are estimated</div>
+  <div class="card"><div class="card-body">
+    <label class="form-label">Select Countries (Ctrl/Cmd for multiple)</label>
+    <select class="select-multi" id="compareSelect" multiple></select>
+    <div style="margin-top:.75rem;display:flex;gap:.5rem;">
+      <button class="btn btn-ochre" id="runCompare">Compare Selected</button>
+      <button class="btn btn-outline" id="exportCompare">Export CSV</button>
+    </div>
+  </div></div>
+  <div id="compareResults" style="display:none;margin-top:1.5rem;">
+    <div class="grid-2">
+      <div class="card"><div class="card-body"><div class="card-title">Market Score Comparison</div><div class="chart-wrap h280"><canvas id="compareBar"></canvas></div></div></div>
+      <div class="card"><div class="card-body"><div class="card-title">Digital Readiness Radar</div><div class="chart-wrap h280"><canvas id="compareRadar"></canvas></div></div></div>
+    </div>
+    <div class="card mt-5"><div class="card-body"><div class="card-title">Full Comparison Table</div><div class="table-wrap"><table id="compareTable"><thead><tr><th>Metric</th></tr></thead><tbody></tbody></table></div></div></div>
+  </div>
+</div>
+
+<!-- ═══ FUNDING LANDSCAPE ═══ -->
+<div class="tab-panel" id="tab-funding">
+
+  <div class="fl-hero">
+    <div class="fl-hero-inner">
+      <h2>Funding &amp; Partnership<br><em>Landscape Scanner</em></h2>
+      <p>A curated scan of multilateral funders, philanthropy, Africa-based catalytic funds, corporate innovation, and implementation partners — mapped to <strong style="color:#A8E6C0">Halla Health (digital self-care)</strong> and <strong style="color:#A8E6C0">CHIP (climate–health resilience &amp; infrastructure)</strong> opportunities, with country linkages.</p>
+      <div class="fl-hero-stats">
+        <div class="fl-stat"><div class="fv" id="flTotal">—</div><div class="fl">Total Opportunities</div></div>
+        <div class="fl-stat"><div class="fv">5</div><div class="fl">Categories</div></div>
+        <div class="fl-stat"><div class="fv">$2.8T</div><div class="fl">Africa NDC Need 2030</div></div>
+        <div class="fl-stat"><div class="fv">&lt;3%</div><div class="fl">Africa's share of global climate finance</div></div>
+      </div>
+    </div>
+  </div>
+
+  <input class="fl-search" id="flSearch" type="text" placeholder="🔍  Search funders, mechanisms, countries…" />
+
+  <div class="fl-filter-bar">
+    <span class="fl-filter-label">Filter:</span>
+    <button class="fl-chip active" data-filter="all">All</button>
+    <button class="fl-chip cat-multi" data-filter="multilateral">Multilateral &amp; Bilateral</button>
+    <button class="fl-chip cat-phil" data-filter="philanthropy">Philanthropy &amp; Foundations</button>
+    <button class="fl-chip cat-africa" data-filter="africa-funds">Africa Catalytic Funds</button>
+    <button class="fl-chip cat-corp" data-filter="corporate">Corporate / Blended / Challenges</button>
+    <button class="fl-chip cat-impl" data-filter="implementation">Implementation &amp; Research Partners</button>
+    <span style="margin-left:auto;display:flex;gap:.4rem;">
+      <span class="focus-pill focus-halla">💙 Halla</span>
+      <span class="focus-pill focus-chip">🌿 CHIP</span>
+      <span class="focus-pill focus-both">✦ Both</span>
+    </span>
+  </div>
+
+  <div id="flContainer"></div>
+
+</div>
+
+<!-- ═══ INSIGHTS ═══ -->
+<div class="tab-panel" id="tab-insights">
+  <div class="section-title">Strategic Market Entry Roadmap</div>
+  <div class="section-sub">Data-driven phasing for Halla Health's Africa expansion</div>
+
+  <div class="grid-2">
+    <div>
+      <div class="phase-card green">
+        <div class="phase-head"><h3>Phase 1 — Immediate Entry (0–12 months)</h3><span class="phase-tag tag-now">Now</span></div>
+        <p>Prioritise markets with confirmed high digital infrastructure, strong government eHealth strategies, and active global org presence. English-speaking markets reduce localisation costs.</p>
+        <div class="country-tags">
+          <span class="ctag">🇿🇦 South Africa</span><span class="ctag">🇰🇪 Kenya</span>
+          <span class="ctag">🇷🇼 Rwanda</span><span class="ctag">🇬🇭 Ghana</span>
+          <span class="ctag">🇲🇺 Mauritius</span>
+        </div>
+        <p style="margin-top:.65rem;"><strong style="color:var(--forest)">Actions:</strong> Integrate with M-Pesa/MTN MoMo payments. Register as digital health provider under national eHealth frameworks (SA NDHS, Kenya eHealth Policy 2016–2030, Rwanda National Digital Health Strategic Plan). Partner with PharmAccess, Aga Khan Health Services, Safaricom.</p>
+      </div>
+      <div class="phase-card">
+        <div class="phase-head"><h3>Phase 2 — Rapid Scale (12–24 months)</h3><span class="phase-tag tag-soon">Soon</span></div>
+        <p>Enter high-population, improving-digital markets. Develop Arabic and French interfaces. Leverage NDC climate-health integration opportunities, especially in North Africa.</p>
+        <div class="country-tags">
+          <span class="ctag">🇳🇬 Nigeria</span><span class="ctag">🇪🇬 Egypt</span>
+          <span class="ctag">🇹🇳 Tunisia</span><span class="ctag">🇲🇦 Morocco</span>
+          <span class="ctag">🇸🇳 Senegal</span><span class="ctag">🇨🇮 Côte d'Ivoire</span>
+          <span class="ctag">🇹🇿 Tanzania</span>
+        </div>
+        <p style="margin-top:.65rem;"><strong style="color:var(--ochre-dark)">Actions:</strong> Multi-language platform (English, French, Arabic, Swahili). Partner with Africa CDC, WHO AFRO, USAID digital health programs. Offline-capable app for low-bandwidth regions (ITU 2024: only 38% of Africa uses internet).</p>
+      </div>
+      <div class="phase-card rust">
+        <div class="phase-head"><h3>Phase 3 — Long-term Build (24+ months)</h3><span class="phase-tag tag-later">Later</span></div>
+        <p>Invest in infrastructure-constrained markets. Use community health worker (CHW) digital tools, SMS/USSD interfaces, and government digital health partnerships to reach offline populations.</p>
+        <div class="country-tags">
+          <span class="ctag">🇪🇹 Ethiopia</span><span class="ctag">🇺🇬 Uganda</span>
+          <span class="ctag">🇨🇩 DR Congo</span><span class="ctag">🇲🇿 Mozambique</span>
+          <span class="ctag">🇲🇱 Mali</span><span class="ctag">🇧🇫 Burkina Faso</span>
+        </div>
+        <p style="margin-top:.65rem;"><strong style="color:var(--rust)">Actions:</strong> Partner with AfDB Climate Action Window for climate-health funding. USAID/PEPFAR digital health frameworks. Design ultra-low-data solutions. Engage GIZ, DFID, Bill & Melinda Gates Foundation for co-funding.</p>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:1.25rem;">
+      <div class="card"><div class="card-body">
+        <div class="card-title">Risk Assessment</div>
+        <div class="risk-row">
+          <div class="risk-icon orange">⚡</div>
+          <div><div class="risk-title">Connectivity Gap</div>
+          <div class="risk-desc">ITU (2024): only 38% of Africa is online vs 68% globally. Urban penetration is 57%, rural just 23% — the widest urban-rural gap of any world region. 14% have no mobile coverage at all. <em>Mitigation: offline-first architecture; sync on connection.</em></div></div>
+        </div>
+        <div class="risk-row">
+          <div class="risk-icon red">💱</div>
+          <div><div class="risk-title">Currency & Payment Volatility</div>
+          <div class="risk-desc">FX risk in Nigeria (Naira devalued 40%+ in 2023), Ethiopia, Zimbabwe, Sudan. <em>Mitigation: price in USD/local stable currency; integrate mobile money (M-Pesa, MTN MoMo, Orange Money) to reduce FX exposure.</em></div></div>
+        </div>
+        <div class="risk-row">
+          <div class="risk-icon orange">🏛️</div>
+          <div><div class="risk-title">Regulatory Fragmentation</div>
+          <div class="risk-desc">54 regulatory frameworks. Only 18% of African countries have reached advanced ICT regulation (G4), vs 38% globally (ITU 2024). Data localisation laws exist in Kenya, SA, Nigeria. <em>Mitigation: modular architecture; country-specific legal entities.</em></div></div>
+        </div>
+        <div class="risk-row">
+          <div class="risk-icon green">🌡️</div>
+          <div><div class="risk-title">Climate Vulnerability = Opportunity</div>
+          <div class="risk-desc">Africa needs $2.8 trillion for NDC implementation by 2030 (UNDP 2024). Climate-health nexus creates funding pathways. AfDB Climate Action Window, GCF, AAAP all open to health-linked digital projects. <em>Strategy: position Halla as climate-health platform.</em></div></div>
+        </div>
+        <div class="risk-row">
+          <div class="risk-icon red">👥</div>
+          <div><div class="risk-title">Health System Weakness</div>
+          <div class="risk-desc">WHO Atlas (2023): only 5 African countries met the $249/cap health spending threshold in 2020. Out-of-pocket payments average 35.8% of health expenditure. <em>Mitigation: freemium model; integrate with national insurance schemes (NHIF Kenya, NHIA Nigeria).</em></div></div>
+        </div>
+      </div></div>
+
+      <div class="card"><div class="card-body">
+        <div class="card-title">Average Score by Sub-Region</div>
+        <div class="chart-wrap h280"><canvas id="regionChart"></canvas></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- SOURCE FOOTER -->
+<div class="source-footer">
+  <div class="source-footer-inner">
+    <h3>Data Sources & Methodology</h3>
+    <div class="source-list">
+      <div class="source-item"><strong style="color:#EAD9B8">GNI per Capita:</strong> World Bank Atlas Method 2023 — <a href="https://data.worldbank.org/indicator/NY.GNP.PCAP.CD" target="_blank">data.worldbank.org</a></div>
+      <div class="source-item"><strong style="color:#EAD9B8">Internet Penetration:</strong> ITU Facts & Figures 2024, DataReportal Jan 2024 — <a href="https://www.itu.int/itu-d/reports/statistics/2024/11/10/ff24-internet-use/" target="_blank">itu.int</a></div>
+      <div class="source-item"><strong style="color:#EAD9B8">Mobile Penetration:</strong> GSMA Mobile Economy Africa 2024/2025 — <a href="https://www.gsma.com/solutions-and-impact/connectivity-for-good/mobile-economy/africa/" target="_blank">gsma.com</a></div>
+      <div class="source-item"><strong style="color:#EAD9B8">Health Expenditure:</strong> WHO Global Health Expenditure Database 2023 — <a href="https://apps.who.int/nha/database/" target="_blank">apps.who.int</a></div>
+      <div class="source-item"><strong style="color:#EAD9B8">Population:</strong> UN World Population Prospects 2024 — <a href="https://population.un.org/wpp/" target="_blank">population.un.org</a></div>
+      <div class="source-item"><strong style="color:#EAD9B8">eHealth Strategies:</strong> ICTworks African eHealth Policy Database; Oxford Open Digital Health 2024 — <a href="https://www.ictworks.org/african-national-ehealth-strategy-policy/" target="_blank">ictworks.org</a></div>
+      <div class="source-item"><strong style="color:#EAD9B8">Climate Finance:</strong> UNDP Climate Finance Africa 2024, AfDB — <a href="https://www.undp.org/sites/g/files/zskgke326/files/2024-09/climate_finance_africa_v.6_lq.pdf" target="_blank">undp.org</a></div>
+      <div class="source-item"><strong style="color:#EAD9B8">Market Score:</strong> Composite index (internet, mobile, GNI, health spend, health infra, digital health policy maturity). Weights: internet 20%, mobile 15%, GNI 15%, health spend 20%, health infra 20%, eHealth policy 10%.</div>
+      <div class="source-item"><strong style="color:#EAD9B8">★ Estimated fields:</strong> Digital literacy, health app usage, health infrastructure score, rural %. Estimated from regional averages, academic literature (Nature npj Digital Medicine 2023), and ITU sub-regional data.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  DATA  — verified & annotated
+//  Sources:
+//    gni: World Bank 2023 (beautifydata / WB indicator NY.GNP.PCAP.CD)
+//    internet: ITU 2024 / DataReportal Jan 2024
+//    mobile: GSMA 2024 (unique subscriber penetration %)
+//    health_spend: WHO GHED 2023 (govt health expenditure per capita USD)
+//    pop: UN WPP 2024
+//    health_infra, digital_lit, rural, health_app: ★ ESTIMATED
+// ═══════════════════════════════════════════════════════════
+const VERIFIED = 'v';   // verified
+const ESTIMATED = 'e';  // estimated
+
+// Country data schema:
+// name, region, pop, gni, internet, internetSrc, mobile, mobileSrc,
+// health_spend, health_spendSrc, health_infra(★), digital_lit(★), rural(★), health_app(★),
+// market_score, priority,
+// gov_initiatives[], climate_budget_note, partner_orgs[]
+const countries = [
+// ─── EAST AFRICA ───────────────────────────────────────────
+{
+  name:"Kenya", region:"East Africa", pop:55.1, gni:2110, gniSrc:VERIFIED,
+  internet:42, internetSrc:"ITU 2024 / DataReportal", mobile:63, mobileSrc:"GSMA 2024",
+  health_spend:98, health_spendSrc:"WHO GHED 2023",
+  health_infra:6.8, digital_lit:40, rural:72, health_app:32,
+  market_score:6.10, priority:"High Priority",
+  gov_initiatives:["National eHealth Policy 2016–2030","Digital Health Strategic Plan 2023–2028","Kenya Digital Economy Blueprint","National Health Insurance Fund (NHIF) digital integration","Smart Africa Champion country"],
+  climate_budget:"NDC targets 32% GHG reduction by 2030; $62B needed total. Green Climate Fund recipient. Climate Finance Facility operational. Africa Climate Summit 2023 host — $23B pledged.",
+  partner_orgs:["USAID/PEPFAR digital health","Aga Khan Health Services","PharmAccess Foundation","Safaricom (M-TIBA platform)","Amref Health Africa HQ Nairobi","WHO AFRO","Africa CDC","mPedigree","Zipline (blood delivery drones)"]
+},
+{
+  name:"Rwanda", region:"East Africa", pop:14.2, gni:980, gniSrc:VERIFIED,
+  internet:30, internetSrc:"ITU 2024", mobile:82, mobileSrc:"GSMA 2024",
+  health_spend:107, health_spendSrc:"WHO GHED 2023",
+  health_infra:7.2, digital_lit:34, rural:83, health_app:28,
+  market_score:5.95, priority:"High Priority",
+  gov_initiatives:["National Digital Health Strategic Plan 2018–2023 (renewal 2024)","Babyl AI-powered telemedicine app (national coverage)","National Health Information System (HMIS)","Smart Kigali initiative","100,000 community health workers with smartphones"],
+  climate_budget:"NDC: 38% GHG reduction by 2030 conditional on $11.4B. Access to Green Climate Fund. Partner in AAAP (Africa Adaptation Acceleration Program). Received AfDB Climate Action Window funding.",
+  partner_orgs:["Zipline (75%+ of national blood supply by drone)","Clinton Health Access Initiative (CHAI)","Partners in Health","USAID","Babyl Health","Africa CDC","GIZ","UK FCDO","Bill & Melinda Gates Foundation","MSF"]
+},
+{
+  name:"Tanzania", region:"East Africa", pop:67.4, gni:1210, gniSrc:VERIFIED,
+  internet:22, internetSrc:"ITU 2024", mobile:50, mobileSrc:"GSMA 2024",
+  health_spend:60, health_spendSrc:"WHO GHED 2023",
+  health_infra:5.4, digital_lit:24, rural:65, health_app:16,
+  market_score:4.22, priority:"Medium Priority",
+  gov_initiatives:["Digital Health Strategy 2019–2024","NHIF digitisation program","DHIS2 national rollout","Big Results Now! digital health track"],
+  climate_budget:"NDC: 30–35% GHG reduction by 2030 ($60B conditional). GCF financing for coastal resilience. AfDB $9M grant approved 2025 for Mkondoa climate resilience.",
+  partner_orgs:["USAID","Jhpiego (Johns Hopkins affiliate)","JAMII insurance (digital)","MSF","WHO AFRO","Vodacom Tanzania"]
+},
+{
+  name:"Uganda", region:"East Africa", pop:50.1, gni:980, gniSrc:VERIFIED,
+  internet:25, internetSrc:"ITU 2024", mobile:46, mobileSrc:"GSMA 2024",
+  health_spend:47, health_spendSrc:"WHO GHED 2023",
+  health_infra:5.0, digital_lit:22, rural:75, health_app:15,
+  market_score:3.90, priority:"Medium Priority",
+  gov_initiatives:["eHealth Strategy 2019–2024","Uganda Digital Vision 2025","NHIS digital health rollout (planned)","DHIS2 implementation"],
+  climate_budget:"NDC: 22% GHG reduction by 2030 ($5.6B conditional). Climate Change Act 2021. GCF recipient.",
+  partner_orgs:["Makerere University School of Public Health","USAID/PEPFAR","MSF","WHO AFRO","Airtel Uganda mHealth","Matibabu diagnostics startup"]
+},
+{
+  name:"Ethiopia", region:"East Africa", pop:128.7, gni:1130, gniSrc:VERIFIED,
+  internet:20, internetSrc:"ITU 2024", mobile:40, mobileSrc:"GSMA 2024",
+  health_spend:42, health_spendSrc:"WHO GHED 2023",
+  health_infra:4.8, digital_lit:18, rural:79, health_app:12,
+  market_score:3.20, priority:"Long-term Focus",
+  gov_initiatives:["National eHealth/ICT Strategy 2016–2020","Digital Ethiopia 2025","Ethio Telecom mHealth services","37,000 health extension workers equipped"],
+  climate_budget:"NDC: 68% GHG reduction by 2030 ($316B needed total). Green Climate Fund recipient. AAAP beneficiary. African Climate Summit co-host 2023.",
+  partner_orgs:["LifeBank (blood supply expansion)","WHO AFRO","UNICEF","Safaricom Ethiopia","Clinton Health Access Initiative (CHAI)","MSF","Partners in Health"]
+},
+{
+  name:"Mozambique", region:"East Africa", pop:34.5, gni:530, gniSrc:VERIFIED,
+  internet:16, internetSrc:"ITU 2024", mobile:35, mobileSrc:"GSMA 2024",
+  health_spend:48, health_spendSrc:"WHO GHED 2023",
+  health_infra:4.2, digital_lit:14, rural:68, health_app:10,
+  market_score:2.68, priority:"Long-term Focus",
+  gov_initiatives:["Health Information Systems Strategic Plan 2017–2021","e-SISTAFE digital finance integration","DHIS2 implementation"],
+  climate_budget:"Among world's most climate-vulnerable. NDC: 36% GHG reduction by 2025 ($4.8B conditional). Cyclone recovery funding from GCF. AfDB Climate Action Window 2024.",
+  partner_orgs:["MSF","USAID/PEPFAR","CHAI","WHO AFRO","Friends in Global Health","Vodacom Mozambique"]
+},
+{
+  name:"Madagascar", region:"East Africa", pop:30.3, gni:530, gniSrc:VERIFIED,
+  internet:11, internetSrc:"ITU 2024", mobile:40, mobileSrc:"GSMA 2024",
+  health_spend:37, health_spendSrc:"WHO GHED 2023",
+  health_infra:3.8, digital_lit:12, rural:80, health_app:8,
+  market_score:2.40, priority:"Long-term Focus",
+  gov_initiatives:["Plan Emergence Madagascar — digital health included","DHIS2 implementation"],
+  climate_budget:"NDC: 14% GHG reduction unconditional. Highly climate-vulnerable. AfDB Climate Action Window $31M grant 2024 for climate resilience.",
+  partner_orgs:["MSF","WHO AFRO","UNICEF","USAID","Médecins du Monde"]
+},
+{
+  name:"Zambia", region:"East Africa", pop:20.6, gni:1320, gniSrc:VERIFIED,
+  internet:30, internetSrc:"ITU 2024", mobile:50, mobileSrc:"GSMA 2024",
+  health_spend:62, health_spendSrc:"WHO GHED 2023",
+  health_infra:5.5, digital_lit:26, rural:57, health_app:18,
+  market_score:3.82, priority:"Long-term Focus",
+  gov_initiatives:["National eHealth Strategic Plan 2017–2021","Smart Zambia Institute","NHIMA digital enrollment","5G FWA (Fixed Wireless Access) expansion noted by GSMA"],
+  climate_budget:"NDC: 47% GHG reduction by 2030 conditional on $50B. AAAP partner — Ghana and Zambia highlighted for digital climate advisory. GCF recipient.",
+  partner_orgs:["Airtel Africa","MTN Zambia","USAID","WHO AFRO","CHAI","PharmAccess"]
+},
+{
+  name:"Malawi", region:"East Africa", pop:21.4, gni:640, gniSrc:VERIFIED,
+  internet:13, internetSrc:"ITU 2024", mobile:36, mobileSrc:"GSMA 2024",
+  health_spend:50, health_spendSrc:"WHO GHED 2023",
+  health_infra:4.0, digital_lit:14, rural:83, health_app:9,
+  market_score:2.48, priority:"Long-term Focus",
+  gov_initiatives:["MEHIS (Monitoring Evaluation & HIS) Strategy 2017–2022","New national e-waste policy (ITU case study 2025)","DHIS2"],
+  climate_budget:"NDC: 41% GHG reduction conditional on $2.4B. LDC. GCF recipient. Highly climate-vulnerable (flooding).",
+  partner_orgs:["MSF","USAID","WHO AFRO","Partners in Health","Airtel Malawi"]
+},
+{
+  name:"Zimbabwe", region:"East Africa", pop:16.3, gni:1740, gniSrc:VERIFIED,
+  internet:34, internetSrc:"ITU 2024", mobile:48, mobileSrc:"GSMA 2024",
+  health_spend:50, health_spendSrc:"WHO GHED 2023",
+  health_infra:4.5, digital_lit:30, rural:68, health_app:20,
+  market_score:3.40, priority:"Long-term Focus",
+  gov_initiatives:["Digital Health Information System","NHIS rollout","Zimbabwe Digital Economy Strategy"],
+  climate_budget:"NDC: 40% GHG reduction by 2030 ($12.8B conditional). Currency instability limits domestic climate finance. GCF recipient.",
+  partner_orgs:["MSF","WHO AFRO","USAID/PEPFAR","Econet Wireless (EcoCash health)"]
+},
+{
+  name:"Somalia", region:"East Africa", pop:18.1, gni:610, gniSrc:VERIFIED,
+  internet:18, internetSrc:"ITU 2024 (est)", mobile:50, mobileSrc:"GSMA 2024",
+  health_spend:38, health_spendSrc:"WHO GHED est.",
+  health_infra:2.5, digital_lit:14, rural:56, health_app:7,
+  market_score:2.02, priority:"Long-term Focus",
+  gov_initiatives:["Nascent digital health infrastructure","M-Birr mobile money","Hormuud Telecom digital services"],
+  climate_budget:"NDC submitted 2021; highly climate-vulnerable; LDC; minimal domestic climate finance capacity. Dependent on international aid.",
+  partner_orgs:["WHO AFRO","UNICEF","MSF","UNHCR","International Medical Corps"]
+},
+{
+  name:"Burundi", region:"East Africa", pop:13.2, gni:230, gniSrc:VERIFIED,
+  internet:6, internetSrc:"ITU 2024", mobile:30, mobileSrc:"GSMA est.",
+  health_spend:24, health_spendSrc:"WHO GHED 2023",
+  health_infra:3.2, digital_lit:8, rural:88, health_app:4,
+  market_score:1.78, priority:"Long-term Focus",
+  gov_initiatives:["Basic DHIS2 implementation","Nascent national health strategy"],
+  climate_budget:"LDC. Highly climate-vulnerable. NDC conditional on external finance. Minimal domestic budget for climate.",
+  partner_orgs:["WHO AFRO","UNICEF","MSF","IMC (International Medical Corps)"]
+},
+{
+  name:"Eritrea", region:"East Africa", pop:3.7, gni:null, gniSrc:"No World Bank data (isolated economy)",
+  internet:19, internetSrc:"ITU est.", mobile:20, mobileSrc:"GSMA est.",
+  health_spend:35, health_spendSrc:"WHO est.",
+  health_infra:4.0, digital_lit:10, rural:58, health_app:5,
+  market_score:2.08, priority:"Long-term Focus",
+  gov_initiatives:["Limited digital health infrastructure","Tele-health pilot program (WHO-supported)"],
+  climate_budget:"NDC submitted. Highly isolated internationally; limited access to GCF/multilateral climate funds.",
+  partner_orgs:["WHO AFRO","UNICEF"]
+},
+{
+  name:"Djibouti", region:"East Africa", pop:1.1, gni:3450, gniSrc:VERIFIED,
+  internet:58, internetSrc:"ITU 2024", mobile:46, mobileSrc:"GSMA 2024",
+  health_spend:128, health_spendSrc:"WHO GHED est.",
+  health_infra:5.8, digital_lit:35, rural:22, health_app:26,
+  market_score:4.00, priority:"Medium Priority",
+  gov_initiatives:["Djibouti Vision 2035 — digital economy pillar","eHealth strategy in development","Submarine cable hub (strategic location)"],
+  climate_budget:"Small state, high climate exposure. AfDB Climate Action Window recipient 2024 ($31M program). GCF recipient.",
+  partner_orgs:["WHO AFRO","World Bank","AfDB","Aga Khan Health Services"]
+},
+{
+  name:"Comoros", region:"East Africa", pop:0.9, gni:1600, gniSrc:VERIFIED,
+  internet:27, internetSrc:"ITU est.", mobile:40, mobileSrc:"GSMA est.",
+  health_spend:80, health_spendSrc:"WHO est.",
+  health_infra:4.2, digital_lit:20, rural:71, health_app:11,
+  market_score:2.58, priority:"Long-term Focus",
+  gov_initiatives:["Basic DHIS2 implementation"],
+  climate_budget:"SIDS. Climate-vulnerable. LDC. GCF recipient.",
+  partner_orgs:["WHO AFRO","UNICEF","AfDB"]
+},
+{
+  name:"Seychelles", region:"East Africa", pop:0.1, gni:16940, gniSrc:VERIFIED,
+  internet:82, internetSrc:"DataReportal 2024", mobile:170, mobileSrc:"GSMA 2024",
+  health_spend:780, health_spendSrc:"WHO GHED est.",
+  health_infra:7.0, digital_lit:72, rural:5, health_app:60,
+  market_score:5.40, priority:"Low Priority",
+  gov_initiatives:["eHealth strategy for islands","Digital Seychelles 2030","Telemedicine for outer islands"],
+  climate_budget:"SIDS. Climate Finance Treaty commitments. One of first African countries to meet 30x30 marine protection. Loss & Damage Fund eligible.",
+  partner_orgs:["WHO AFRO","World Bank","Indian Ocean Commission"]
+},
+{
+  name:"Mauritius", region:"East Africa", pop:1.3, gni:11530, gniSrc:VERIFIED,
+  internet:69, internetSrc:"ITU 2024", mobile:145, mobileSrc:"GSMA 2024",
+  health_spend:750, health_spendSrc:"WHO GHED est.",
+  health_infra:7.8, digital_lit:65, rural:37, health_app:55,
+  market_score:6.35, priority:"High Priority",
+  gov_initiatives:["National eHealth Strategy 2010–2015 (under renewal)","Electronic Medical Records (EMR) rollout","Mauritius Africa FinTech Hub","Smart City project"],
+  climate_budget:"Upper-middle income SIDS. NDC: 40% renewable energy by 2030. Regional green hub ambitions. AfDB partner.",
+  partner_orgs:["WHO AFRO","World Bank","AfDB","Indian Ocean Commission","Aga Khan Health Network"]
+},
+
+// ─── WEST AFRICA ─────────────────────────────────────────
+{
+  name:"Nigeria", region:"West Africa", pop:228.0, gni:1930, gniSrc:VERIFIED,
+  internet:51, internetSrc:"DataReportal Jan 2024", mobile:62, mobileSrc:"GSMA 2024",
+  health_spend:84, health_spendSrc:"WHO GHED 2023",
+  health_infra:5.2, digital_lit:38, rural:52, health_app:40,
+  market_score:5.22, priority:"Medium Priority",
+  gov_initiatives:["National Health ICT Strategic Framework 2015–2020 (under revision)","National Health Insurance Authority (NHIA) Act 2022","Nigeria Digital Economy Policy","Africa CDC HQ partnership","44.43% broadband penetration (NCC Dec 2024)"],
+  climate_budget:"NDC: 47% GHG reduction by 2030 ($177B needed). Africa's largest economy; major emitter. Climate finance recipient. Plans for $23B climate finance from African Climate Summit.",
+  partner_orgs:["Reliance Health","Helium Health","LifeBank","Labtracka","USAID/PEPFAR","PharmAccess","World Bank Digital Economy","WHO AFRO","Africa CDC"]
+},
+{
+  name:"Ghana", region:"West Africa", pop:34.1, gni:2340, gniSrc:VERIFIED,
+  internet:68, internetSrc:"DataReportal 2024", mobile:65, mobileSrc:"GSMA 2024",
+  health_spend:104, health_spendSrc:"WHO GHED 2023",
+  health_infra:6.2, digital_lit:54, rural:47, health_app:42,
+  market_score:5.85, priority:"High Priority",
+  gov_initiatives:["Ghana eHealth Strategy 2010–2015 (updated)","National Health Insurance Authority (NHIA) digitisation","Digital economy policy 2020","Zipline drone delivery operational","Smart Africa Charter signatory"],
+  climate_budget:"NDC: 64 MtCO2e reduction by 2030 ($23.9B conditional). AAAP partner (highlighted for digital climate advisory — GCA 2025). GCF recipient.",
+  partner_orgs:["Zipline Ghana","mPedigree","USAID","PharmAccess","WHO AFRO","AfDB","Aga Khan Health Services","mPharma"]
+},
+{
+  name:"Senegal", region:"West Africa", pop:18.3, gni:1660, gniSrc:VERIFIED,
+  internet:46, internetSrc:"ITU 2024", mobile:95, mobileSrc:"GSMA 2024",
+  health_spend:85, health_spendSrc:"WHO GHED est.",
+  health_infra:5.5, digital_lit:32, rural:55, health_app:26,
+  market_score:4.22, priority:"Medium Priority",
+  gov_initiatives:["Plan Sénégal Numérique 2025","Digital health roadmap in National Health Strategic Plan","DHIS2 implementation","Dakar as tech hub"],
+  climate_budget:"NDC submitted. COP-president 2023 (Macky Sall co-hosted COP28 Adaptation Finance Summit). GCF recipient.",
+  partner_orgs:["Orange Sonatel","WHO AFRO","USAID","AfDB","Aga Khan Health Services","Institut Pasteur Dakar (vaccines/epi)"]
+},
+{
+  name:"Côte d'Ivoire", region:"West Africa", pop:28.2, gni:2670, gniSrc:VERIFIED,
+  internet:36, internetSrc:"ITU 2024", mobile:85, mobileSrc:"GSMA 2024",
+  health_spend:90, health_spendSrc:"WHO GHED est.",
+  health_infra:5.5, digital_lit:28, rural:53, health_app:22,
+  market_score:4.15, priority:"Medium Priority",
+  gov_initiatives:["Digital Health Strategic Plan","CMU (Universal Health Coverage) digitisation","Côte d'Ivoire Digital (CID) program","Top 50 Africa FDI ranking (Africa Broadband Outlook 2024)"],
+  climate_budget:"NDC: 30.41% GHG reduction by 2030 conditional. GCF recipient. Forest REDD+ program.",
+  partner_orgs:["Orange CI","MTN Côte d'Ivoire","WHO AFRO","USAID","AfDB","Aga Khan Health Services"]
+},
+{
+  name:"Mali", region:"West Africa", pop:23.0, gni:860, gniSrc:VERIFIED,
+  internet:17, internetSrc:"ITU 2024", mobile:60, mobileSrc:"GSMA 2024",
+  health_spend:52, health_spendSrc:"WHO GHED est.",
+  health_infra:4.0, digital_lit:16, rural:58, health_app:9,
+  market_score:2.32, priority:"Long-term Focus",
+  gov_initiatives:["Politique Nationale CybersantÉ 2013","L'Union Technique de la Mutualité Malienne (JAMII-type digital health)","DHIS2"],
+  climate_budget:"LDC. Sahel — extreme climate vulnerability. $1B+ Sahel Alliance climate/development pledge. NDC conditional on external finance.",
+  partner_orgs:["MSF","WHO AFRO","UNICEF","USAID","Orange Mali"]
+},
+{
+  name:"Burkina Faso", region:"West Africa", pop:23.2, gni:850, gniSrc:VERIFIED,
+  internet:15, internetSrc:"ITU 2024", mobile:65, mobileSrc:"GSMA 2024",
+  health_spend:48, health_spendSrc:"WHO GHED est.",
+  health_infra:3.8, digital_lit:14, rural:70, health_app:7,
+  market_score:2.18, priority:"Long-term Focus",
+  gov_initiatives:["PNDES digital health component","DHIS2 implementation","Community health workers mobile support"],
+  climate_budget:"LDC. Sahel. Severe climate vulnerability + security crisis limits finance access. AAAP eligible.",
+  partner_orgs:["MSF","WHO AFRO","UNICEF","Médecins du Monde","Orange Burkina Faso"]
+},
+{
+  name:"Guinea", region:"West Africa", pop:14.2, gni:1360, gniSrc:VERIFIED,
+  internet:21, internetSrc:"ITU 2024", mobile:63, mobileSrc:"GSMA est.",
+  health_spend:55, health_spendSrc:"WHO GHED est.",
+  health_infra:3.8, digital_lit:14, rural:63, health_app:7,
+  market_score:2.28, priority:"Long-term Focus",
+  gov_initiatives:["PNDS 2015–2024 (digital health component)","Ebola response digital infrastructure (WHO/USAID)","DHIS2"],
+  climate_budget:"LDC. GCF recipient. NDC submitted 2021.",
+  partner_orgs:["WHO AFRO","MSF","USAID","MTN Guinea"]
+},
+{
+  name:"Niger", region:"West Africa", pop:27.2, gni:600, gniSrc:VERIFIED,
+  internet:10, internetSrc:"ITU 2024", mobile:42, mobileSrc:"GSMA 2024",
+  health_spend:32, health_spendSrc:"WHO GHED est.",
+  health_infra:3.0, digital_lit:8, rural:85, health_app:4,
+  market_score:1.72, priority:"Long-term Focus",
+  gov_initiatives:["Stratégie Nationale E-Santé 2019–2023","DHIS2 implementation","Nascent community health digital tools"],
+  climate_budget:"LDC. World's most climate-vulnerable. Sahel. NDC conditional. AAAP eligible. Severe access barriers.",
+  partner_orgs:["MSF","WHO AFRO","UNICEF","Médecins du Monde","Airtel Niger"]
+},
+{
+  name:"Sierra Leone", region:"West Africa", pop:8.9, gni:560, gniSrc:VERIFIED,
+  internet:21, internetSrc:"ITU 2024", mobile:54, mobileSrc:"GSMA est.",
+  health_spend:68, health_spendSrc:"WHO GHED est.",
+  health_infra:3.5, digital_lit:18, rural:57, health_app:9,
+  market_score:2.40, priority:"Long-term Focus",
+  gov_initiatives:["Digital Health Strategic Plan","DistrictAMS (hospital management)","Ebola response digital infrastructure","AfDB Climate Action Window $31M recipient 2024"],
+  climate_budget:"LDC. AfDB Climate Action Window recipient. GCF. NDC conditional.",
+  partner_orgs:["MSF","WHO AFRO","USAID","Concern Worldwide","Orange Sierra Leone"]
+},
+{
+  name:"Liberia", region:"West Africa", pop:5.4, gni:730, gniSrc:VERIFIED,
+  internet:17, internetSrc:"ITU 2024", mobile:50, mobileSrc:"GSMA est.",
+  health_spend:73, health_spendSrc:"WHO GHED est.",
+  health_infra:3.2, digital_lit:16, rural:47, health_app:9,
+  market_score:2.35, priority:"Long-term Focus",
+  gov_initiatives:["HIS & ICT Strategic Plan 2016–2021","Ebola response digital infrastructure","DHIS2 implementation"],
+  climate_budget:"LDC. GCF recipient. NDC submitted.",
+  partner_orgs:["WHO AFRO","MSF","USAID","Partners in Health","MTN Liberia"]
+},
+{
+  name:"Togo", region:"West Africa", pop:9.0, gni:1030, gniSrc:VERIFIED,
+  internet:25, internetSrc:"ITU 2024", mobile:58, mobileSrc:"GSMA est.",
+  health_spend:65, health_spendSrc:"WHO GHED est.",
+  health_infra:4.2, digital_lit:20, rural:57, health_app:12,
+  market_score:2.92, priority:"Long-term Focus",
+  gov_initiatives:["Togo Digital 2020 strategy","Digital health included in PNDS","FASOKAN mobile health program","Equiano subsea cable landing (Google)"],
+  climate_budget:"LDC. GCF recipient. NDC submitted. Equiano cable improving digital infrastructure.",
+  partner_orgs:["WHO AFRO","USAID","AfDB","Togocom"]
+},
+{
+  name:"Benin", region:"West Africa", pop:13.8, gni:1440, gniSrc:VERIFIED,
+  internet:28, internetSrc:"ITU 2024", mobile:83, mobileSrc:"GSMA 2024",
+  health_spend:62, health_spendSrc:"WHO GHED est.",
+  health_infra:4.5, digital_lit:20, rural:52, health_app:12,
+  market_score:3.08, priority:"Long-term Focus",
+  gov_initiatives:["Bénin Numérique 2022","Digital health in National Health Development Plan","DHIS2 rollout","MTN Benin mobile money health payments"],
+  climate_budget:"LDC. GCF recipient. Climate vulnerability — coastal flooding.",
+  partner_orgs:["WHO AFRO","USAID","AfDB","MTN Benin","Médecins du Monde"]
+},
+{
+  name:"Gambia", region:"West Africa", pop:2.8, gni:830, gniSrc:VERIFIED,
+  internet:28, internetSrc:"ITU 2024", mobile:70, mobileSrc:"GSMA est.",
+  health_spend:70, health_spendSrc:"WHO GHED est.",
+  health_infra:4.2, digital_lit:22, rural:45, health_app:12,
+  market_score:2.85, priority:"Long-term Focus",
+  gov_initiatives:["Digital health component in NHSP","DHIS2 rollout","Africell digital health partnerships"],
+  climate_budget:"LDC. GCF recipient. West Africa climate-vulnerable.",
+  partner_orgs:["WHO AFRO","USAID","Africell","Medical Research Council (UK/Gambia unit)"]
+},
+{
+  name:"Guinea-Bissau", region:"West Africa", pop:2.2, gni:900, gniSrc:VERIFIED,
+  internet:13, internetSrc:"ITU 2024", mobile:60, mobileSrc:"GSMA est.",
+  health_spend:45, health_spendSrc:"WHO GHED est.",
+  health_infra:3.2, digital_lit:10, rural:72, health_app:5,
+  market_score:2.02, priority:"Long-term Focus",
+  gov_initiatives:["Basic DHIS2 implementation","WHO-supported eHealth pilot"],
+  climate_budget:"LDC. GCF eligible. NDC submitted.",
+  partner_orgs:["WHO AFRO","MSF","UNICEF"]
+},
+{
+  name:"Cabo Verde", region:"West Africa", pop:0.6, gni:4280, gniSrc:VERIFIED,
+  internet:65, internetSrc:"ITU 2024", mobile:102, mobileSrc:"GSMA est.",
+  health_spend:340, health_spendSrc:"WHO est.",
+  health_infra:6.5, digital_lit:60, rural:36, health_app:43,
+  market_score:5.10, priority:"Medium Priority",
+  gov_initiatives:["National eHealth Strategy","Digital Cabo Verde","EMR rollout","Telemedicine for outer islands"],
+  climate_budget:"SIDS. Paris-compliant NDC. AfDB partner. Climate-vulnerable islands.",
+  partner_orgs:["WHO AFRO","World Bank","AfDB","CV Telecom"]
+},
+{
+  name:"Mauritania", region:"West Africa", pop:4.9, gni:2150, gniSrc:VERIFIED,
+  internet:31, internetSrc:"ITU 2024", mobile:90, mobileSrc:"GSMA 2024",
+  health_spend:80, health_spendSrc:"WHO est.",
+  health_infra:4.5, digital_lit:20, rural:53, health_app:11,
+  market_score:2.82, priority:"Long-term Focus",
+  gov_initiatives:["Projet National de Telemedicine 2005 (limited progress)","DHIS2 basic implementation"],
+  climate_budget:"Sahel LDC. Severely climate-vulnerable. GCF recipient. NDC conditional.",
+  partner_orgs:["WHO AFRO","UNICEF","Mauritanian Telecom"]
+},
+
+// ─── NORTH AFRICA ─────────────────────────────────────────
+{
+  name:"Egypt", region:"North Africa", pop:107.8, gni:3900, gniSrc:VERIFIED,
+  internet:72, internetSrc:"DataReportal Jan 2024", mobile:92, mobileSrc:"GSMA 2024",
+  health_spend:173, health_spendSrc:"WHO GHED est.",
+  health_infra:6.5, digital_lit:58, rural:57, health_app:52,
+  market_score:5.78, priority:"High Priority",
+  gov_initiatives:["Egypt Digital Health Strategy 2030","National eHealth Network (NeHN)","HIMS (Hospital Information Management System)","Universal Health Coverage Act 2018 — digital component","Egypt Vision 2030"],
+  climate_budget:"NDC: 33% renewable energy by 2035. COP27 host 2022 — climate finance flagship. Sharm el-Sheikh Adaptation Agenda. Loss & Damage Fund launch. GCF recipient.",
+  partner_orgs:["WHO EMRO","World Bank","USAID","Vezeeta (digital health unicorn)","Alodaay","AfDB","Roche diagnostics","Pfizer","Johnson & Johnson"]
+},
+{
+  name:"Morocco", region:"North Africa", pop:37.8, gni:3700, gniSrc:VERIFIED,
+  internet:91, internetSrc:"DataReportal Jan 2024 — Africa leader", mobile:100, mobileSrc:"GSMA 2024",
+  health_spend:219, health_spendSrc:"WHO GHED est.",
+  health_infra:6.2, digital_lit:55, rural:37, health_app:46,
+  market_score:5.55, priority:"High Priority",
+  gov_initiatives:["National eHealth Strategy","Ramed digital health insurance program","Digital Morocco 2020 / Maroc Digital 2030","Smart City Casablanca","COP22 host 2016 (Marrakech)"],
+  climate_budget:"NDC: 52% GHG reduction by 2030 ($45B conditional). COP22 host. IRENA partner for solar. GCF recipient. Morocco renewable energy pioneer (Noor Solar Complex).",
+  partner_orgs:["WHO EMRO","World Bank","AfDB","Maroc Telecom","IRENA","GIZ","EU Health projects","OCP Foundation (health programs)"]
+},
+{
+  name:"Tunisia", region:"North Africa", pop:12.1, gni:3770, gniSrc:VERIFIED,
+  internet:68, internetSrc:"ITU 2024", mobile:96, mobileSrc:"GSMA 2024",
+  health_spend:295, health_spendSrc:"WHO GHED est.",
+  health_infra:6.8, digital_lit:52, rural:32, health_app:40,
+  market_score:5.48, priority:"High Priority",
+  gov_initiatives:["National Digital Health Strategy","CNAM (National Health Insurance) digital reforms","eGovernment portal — health services","Tunisia Digital 2020"],
+  climate_budget:"NDC: 45% renewable energy by 2030 conditional on $18.8B. GCF recipient. IRENA partner.",
+  partner_orgs:["WHO EMRO","World Bank","AfDB","EU MedTech partnerships","Tunisie Telecom","Pasteur Institute Tunis"]
+},
+{
+  name:"Algeria", region:"North Africa", pop:46.9, gni:4960, gniSrc:VERIFIED,
+  internet:60, internetSrc:"ITU 2024", mobile:90, mobileSrc:"GSMA 2024",
+  health_spend:315, health_spendSrc:"WHO GHED est.",
+  health_infra:6.2, digital_lit:45, rural:27, health_app:36,
+  market_score:4.95, priority:"Medium Priority",
+  gov_initiatives:["National eHealth Strategy in development","CNAS (Social Insurance) digital integration","Algeria Digital Economy project","Broadband expansion program"],
+  climate_budget:"NDC: 27% GHG reduction by 2030 conditional on $22B. Major oil/gas producer transitioning. GCF recipient.",
+  partner_orgs:["WHO EMRO","World Bank","AfDB","Djezzy (Veon)","Mobilis","Ooredoo Algeria"]
+},
+{
+  name:"Libya", region:"North Africa", pop:7.4, gni:7570, gniSrc:VERIFIED,
+  internet:88, internetSrc:"DataReportal 2024 — high penetration", mobile:80, mobileSrc:"GSMA est.",
+  health_spend:280, health_spendSrc:"WHO est.",
+  health_infra:4.5, digital_lit:38, rural:19, health_app:26,
+  market_score:3.82, priority:"Long-term Focus",
+  gov_initiatives:["Digital health severely disrupted by conflict","WHO humanitarian digital health support","Limited e-government initiatives"],
+  climate_budget:"NDC submitted but conflict limits implementation. Oil-dependent economy.",
+  partner_orgs:["WHO EMRO","UNICEF","MSF","International Rescue Committee"]
+},
+{
+  name:"Sudan", region:"North Africa", pop:47.3, gni:990, gniSrc:VERIFIED,
+  internet:28, internetSrc:"ITU 2024", mobile:62, mobileSrc:"GSMA 2024",
+  health_spend:38, health_spendSrc:"WHO est.",
+  health_infra:3.5, digital_lit:20, rural:65, health_app:12,
+  market_score:2.58, priority:"Long-term Focus",
+  gov_initiatives:["Digital health severely disrupted by 2023 conflict","Sudan Telecom (Sudatel) mobile health","DHIS2 pre-conflict"],
+  climate_budget:"NDC submitted. Climate-vulnerable Sahel nation. Conflict severely limits climate finance access. Emergency humanitarian context.",
+  partner_orgs:["WHO EMRO","MSF","UNICEF","UNHCR","IRC"]
+},
+
+// ─── SOUTHERN AFRICA ────────────────────────────────────────
+{
+  name:"South Africa", region:"Southern Africa", pop:63.0, gni:6750, gniSrc:VERIFIED,
+  internet:75, internetSrc:"DataReportal Jan 2024 (74.7%)", mobile:100, mobileSrc:"GSMA — 195% connections/pop",
+  health_spend:1182, health_spendSrc:"WHO GHED 2023 — Africa's highest per capita",
+  health_infra:7.5, digital_lit:65, rural:32, health_app:60,
+  market_score:7.15, priority:"High Priority",
+  gov_initiatives:["National Digital Health Strategy 2019–2024 (renewal 2025)","National Health Insurance (NHI) Act 2023 — digital backbone","SA Health Patient Registration System (HPRS)","GSMA Open Gateway API — fraud prevention pioneer in Sub-Saharan Africa","5G expansion (Vodacom, MTN, Telkom)"],
+  climate_budget:"Only African country to meet Abuja 15% health budget target. NDC: 50% renewable by 2030. Just Energy Transition Partnership (JETP) — $8.5B committed by international partners (COP26). GCF recipient. COP17 host (Durban 2011).",
+  partner_orgs:["Discovery Health (Vitality digital platform)","Hello Doctor","Vodacom Health","MTN SA","Dis-Chem digital health","PharmAccess","Johnson & Johnson","Roche","Novartis","WHO AFRO HQ (Brazzaville linked)","USAID","Gates Foundation"]
+},
+{
+  name:"Botswana", region:"Southern Africa", pop:2.7, gni:7620, gniSrc:VERIFIED,
+  internet:55, internetSrc:"ITU 2024", mobile:105, mobileSrc:"GSMA 2024",
+  health_spend:492, health_spendSrc:"WHO GHED est.",
+  health_infra:6.8, digital_lit:48, rural:35, health_app:38,
+  market_score:5.50, priority:"High Priority",
+  gov_initiatives:["eHealth Strategy 2019–2023","SmartBotswana Initiative","NHI digital integration","DHIMS (District Health Information Management)"],
+  climate_budget:"Upper-middle income. NDC: renewable energy transition. GCF recipient. SADC climate finance mechanisms.",
+  partner_orgs:["WHO AFRO","World Bank","USAID/PEPFAR","PharmAccess","Botswana Fibre Networks (BoFiNet)","BancABC digital health payments"]
+},
+{
+  name:"Namibia", region:"Southern Africa", pop:2.9, gni:4870, gniSrc:VERIFIED,
+  internet:56, internetSrc:"ITU 2024", mobile:86, mobileSrc:"GSMA 2024",
+  health_spend:428, health_spendSrc:"WHO est.",
+  health_infra:6.5, digital_lit:46, rural:53, health_app:36,
+  market_score:5.15, priority:"Medium Priority",
+  gov_initiatives:["National eHealth Strategy 2010–2020 (update pending)","5G FWA deployment (GSMA noted)","Telehealth expansion for remote areas","NamibHealth DHIS2"],
+  climate_budget:"Upper-middle income. NDC: 91% renewable by 2030 conditional. Green hydrogen potential. GCF recipient.",
+  partner_orgs:["WHO AFRO","USAID/PEPFAR","MTC Namibia","Telecom Namibia","PharmAccess","AfDB"]
+},
+{
+  name:"eSwatini", region:"Southern Africa", pop:1.2, gni:3860, gniSrc:VERIFIED,
+  internet:32, internetSrc:"ITU 2024", mobile:72, mobileSrc:"GSMA est.",
+  health_spend:320, health_spendSrc:"WHO est.",
+  health_infra:5.5, digital_lit:28, rural:79, health_app:20,
+  market_score:3.90, priority:"Long-term Focus",
+  gov_initiatives:["DHIS2 implementation","Digital health in NHSS 2014–2018","HIV program digital tracking (PEPFAR supported)"],
+  climate_budget:"Lower-middle income. GCF recipient. SADC climate frameworks.",
+  partner_orgs:["USAID/PEPFAR","WHO AFRO","MTN eSwatini","MSF"]
+},
+{
+  name:"Lesotho", region:"Southern Africa", pop:2.3, gni:1160, gniSrc:VERIFIED,
+  internet:21, internetSrc:"ITU 2024", mobile:78, mobileSrc:"GSMA est.",
+  health_spend:188, health_spendSrc:"WHO est.",
+  health_infra:4.5, digital_lit:18, rural:74, health_app:11,
+  market_score:3.12, priority:"Long-term Focus",
+  gov_initiatives:["Digital health in NHSS","DHIS2 rollout","mHealth pilot programs (Partners in Health)"],
+  climate_budget:"LDC. Landlocked. Mountain climate vulnerability. GCF recipient.",
+  partner_orgs:["Partners in Health","WHO AFRO","USAID","Vodacom Lesotho"]
+},
+{
+  name:"Angola", region:"Southern Africa", pop:36.7, gni:2130, gniSrc:VERIFIED,
+  internet:33, internetSrc:"ITU 2024", mobile:53, mobileSrc:"GSMA 2024",
+  health_spend:90, health_spendSrc:"WHO GHED est.",
+  health_infra:4.8, digital_lit:24, rural:38, health_app:20,
+  market_score:3.60, priority:"Long-term Focus",
+  gov_initiatives:["Angola Digital 2022 agenda","Health system digitisation (post-oil reform)","5G FWA noted by GSMA 2024","Unitel mHealth services"],
+  climate_budget:"Oil-dependent. NDC: 35% renewable by 2025. GCF recipient. Oil revenue drives some domestic climate finance.",
+  partner_orgs:["WHO AFRO","USAID","MSF","Unitel (Angola Telecom)","AfDB"]
+},
+
+// ─── CENTRAL AFRICA ─────────────────────────────────────────
+{
+  name:"DR Congo", region:"Central Africa", pop:104.0, gni:660, gniSrc:VERIFIED,
+  internet:14, internetSrc:"ITU 2024", mobile:55, mobileSrc:"GSMA 2024",
+  health_spend:28, health_spendSrc:"WHO GHED est.",
+  health_infra:3.5, digital_lit:12, rural:57, health_app:7,
+  market_score:2.42, priority:"Long-term Focus",
+  gov_initiatives:["Digital Health Strategic Plan (WHO-supported)","Ebola response digital infrastructure","DHIS2","Congo Basin Forest Fund — climate-health nexus"],
+  climate_budget:"LDC. Congo Basin — world's 2nd largest rainforest, critical climate asset. AfDB Congo Basin Forest Fund. NDC conditional on $10B+. Massive climate finance potential via REDD+.",
+  partner_orgs:["MSF","WHO AFRO","UNICEF","USAID","IRC","Vodacom Congo","Africa CDC"]
+},
+{
+  name:"Cameroon", region:"Central Africa", pop:28.1, gni:1650, gniSrc:VERIFIED,
+  internet:36, internetSrc:"ITU 2024", mobile:70, mobileSrc:"GSMA 2024",
+  health_spend:72, health_spendSrc:"WHO GHED est.",
+  health_infra:5.0, digital_lit:25, rural:44, health_app:16,
+  market_score:3.52, priority:"Long-term Focus",
+  gov_initiatives:["Digital Health Strategy 2020 (under development)","DHIS2 rollout","CAMTEL digital infrastructure expansion"],
+  climate_budget:"Lower-middle income. Congo Basin partner. GCF recipient. REDD+ eligible.",
+  partner_orgs:["WHO AFRO","USAID","MSF","MTN Cameroon","Orange Cameroon","AfDB"]
+},
+{
+  name:"Chad", region:"Central Africa", pop:19.1, gni:710, gniSrc:VERIFIED,
+  internet:8, internetSrc:"ITU 2024", mobile:45, mobileSrc:"GSMA est.",
+  health_spend:30, health_spendSrc:"WHO est.",
+  health_infra:2.8, digital_lit:6, rural:77, health_app:3,
+  market_score:1.52, priority:"Long-term Focus",
+  gov_initiatives:["Basic DHIS2 pilot","WHO-supported HIS","Chad Digital Economy Strategy (nascent)","AfDB signed two strategic agreements 2024"],
+  climate_budget:"LDC. Lake Chad drying — extreme climate crisis. Sahel. AfDB representative signed strategic agreements Dec 2024. AAAP eligible.",
+  partner_orgs:["MSF","WHO AFRO","UNICEF","UNHCR","Airtel Chad"]
+},
+{
+  name:"Central African Republic", region:"Central Africa", pop:5.7, gni:470, gniSrc:VERIFIED,
+  internet:11, internetSrc:"ITU 2024 — Africa lowest", mobile:36, mobileSrc:"GSMA est.",
+  health_spend:32, health_spendSrc:"WHO est.",
+  health_infra:2.5, digital_lit:6, rural:59, health_app:3,
+  market_score:1.45, priority:"Long-term Focus",
+  gov_initiatives:["Humanitarian digital health (WHO/MSF)","Basic DHIS2 pilot"],
+  climate_budget:"LDC. Fragile state. Minimal domestic climate finance. LDF/FRLD eligible.",
+  partner_orgs:["MSF","WHO AFRO","UNICEF","IRC","Médecins du Monde"]
+},
+{
+  name:"Gabon", region:"Central Africa", pop:2.5, gni:7960, gniSrc:VERIFIED,
+  internet:56, internetSrc:"ITU 2024", mobile:130, mobileSrc:"GSMA est.",
+  health_spend:420, health_spendSrc:"WHO est.",
+  health_infra:5.5, digital_lit:48, rural:12, health_app:33,
+  market_score:4.82, priority:"Medium Priority",
+  gov_initiatives:["Gabon Digital Economy 2022","eHealth included in PNDS","Highly urban — 90%+ urban population","Oil-revenue health system"],
+  climate_budget:"Upper-middle income. Congo Basin — major carbon sink. First African country to receive REDD+ carbon credit payments ($150M from Central African Forest Initiative). GCF recipient.",
+  partner_orgs:["WHO AFRO","World Bank","AfDB","Airtel Gabon","Gabon Telecom (Orange)"]
+},
+{
+  name:"Congo-Brazzaville", region:"Central Africa", pop:6.1, gni:2470, gniSrc:VERIFIED,
+  internet:25, internetSrc:"ITU 2024 est.", mobile:93, mobileSrc:"GSMA 2024",
+  health_spend:90, health_spendSrc:"WHO est.",
+  health_infra:4.5, digital_lit:18, rural:34, health_app:12,
+  market_score:3.30, priority:"Long-term Focus",
+  gov_initiatives:["ITU digital terrestrial television training in Brazzaville (ITU 2025 case study)","Digital health in NHP","DHIS2"],
+  climate_budget:"Lower-middle income. Congo Basin REDD+. GCF recipient.",
+  partner_orgs:["WHO AFRO (Brazzaville HQ)","USAID","MSF","MTN Congo","Airtel Congo"]
+},
+{
+  name:"Equatorial Guinea", region:"Central Africa", pop:1.5, gni:5240, gniSrc:VERIFIED,
+  internet:36, internetSrc:"ITU 2024", mobile:66, mobileSrc:"GSMA est.",
+  health_spend:280, health_spendSrc:"WHO est.",
+  health_infra:4.8, digital_lit:28, rural:30, health_app:18,
+  market_score:3.88, priority:"Long-term Focus",
+  gov_initiatives:["ITU regulatory benchmarking & collaboration project (ITU 2025 case study)","DHIS2 pilot","Oil-funded health infrastructure"],
+  climate_budget:"Upper-middle income. Oil-dependent. GCF eligible.",
+  partner_orgs:["WHO AFRO","ITU (ICT regulatory project)","Marathon Oil","AfDB"]
+},
+{
+  name:"São Tomé & Príncipe", region:"Central Africa", pop:0.2, gni:2480, gniSrc:VERIFIED,
+  internet:28, internetSrc:"ITU 2024 est.", mobile:78, mobileSrc:"GSMA est.",
+  health_spend:200, health_spendSrc:"WHO est.",
+  health_infra:5.0, digital_lit:25, rural:35, health_app:12,
+  market_score:3.38, priority:"Long-term Focus",
+  gov_initiatives:["AfDB $21.9M grant Dec 2025 — Blue Economy & Food Security","Basic eHealth infrastructure","Telemedicine for islands"],
+  climate_budget:"SIDS. AfDB $21.9M Dec 2025 Blue Economy grant includes climate-resilient food security. GCF recipient.",
+  partner_orgs:["WHO AFRO","AfDB","World Bank","CST (Companhia Santomense de Telecomunicações)"]
+},
+];
+
+// ── PALETTE
+const PALETTE=['#C8822A','#2D5A3D','#B94A2C','#1A6E8E','#6B5F4E','#3E7A55','#D4603E','#2A8AAE','#A06519','#4A7A5E','#8C4B2F','#1F5C7A'];
+const REGION_COLORS={"East Africa":"#2D5A3D","West Africa":"#C8822A","North Africa":"#1A6E8E","Southern Africa":"#B94A2C","Central Africa":"#6B5F4E"};
+
+// ── TAB SWITCHING
+document.querySelectorAll('.nav-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ── BADGES
+function badgeHtml(p){
+  const m={"High Priority":"high","Medium Priority":"medium","Low Priority":"low","Long-term Focus":"longterm"};
+  return `<span class="badge badge-${m[p]||'longterm'}">${p}</span>`;
+}
+function priorityColor(p){
+  if(p==="High Priority")return"#2D5A3D";
+  if(p==="Medium Priority")return"#C8822A";
+  if(p==="Low Priority")return"#B94A2C";
+  return"#6B5F4E";
+}
+
+// ── METRICS
+function calcMetrics(){
+  const tot=countries.reduce((s,c)=>s+c.pop,0);
+  const avgNet=(countries.reduce((s,c)=>s+c.internet,0)/countries.length).toFixed(0);
+  const top=Math.max(...countries.map(c=>c.market_score));
+  document.getElementById('metPop').textContent=tot.toFixed(0)+'M';
+  document.getElementById('metInternet').textContent=avgNet+'%';
+  document.getElementById('metTop').textContent=top.toFixed(2);
+  const cnt={};
+  countries.forEach(c=>cnt[c.priority]=(cnt[c.priority]||0)+1);
+  document.getElementById('statHigh').textContent=cnt["High Priority"]||0;
+  document.getElementById('statMed').textContent=cnt["Medium Priority"]||0;
+  document.getElementById('statLow').textContent=cnt["Low Priority"]||0;
+  document.getElementById('statLT').textContent=cnt["Long-term Focus"]||0;
+}
+
+// ── PRIORITY PIE
+function drawPriorityPie(){
+  const cnt={};countries.forEach(c=>cnt[c.priority]=(cnt[c.priority]||0)+1);
+  const labels=Object.keys(cnt),data=labels.map(k=>cnt[k]),colors=labels.map(priorityColor);
+  new Chart(document.getElementById('priorityPie'),{
+    type:'doughnut',
+    data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:2,borderColor:'#FDFAF4'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'60%',
+      plugins:{legend:{position:'bottom',labels:{font:{family:'DM Sans',size:11},padding:10}},
+      tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed} countries`}}}}
+  });
+}
+
+// ── TOP CHART
+function drawTopChart(){
+  const sorted=[...countries].sort((a,b)=>b.market_score-a.market_score).slice(0,12);
+  new Chart(document.getElementById('topChart'),{
+    type:'bar',
+    data:{labels:sorted.map(c=>c.name),
+      datasets:[{data:sorted.map(c=>c.market_score),backgroundColor:sorted.map(c=>REGION_COLORS[c.region]),borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+      scales:{x:{beginAtZero:true,max:8,grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{size:10}}},
+              y:{grid:{display:false},ticks:{font:{size:10}}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`Score: ${ctx.parsed.x.toFixed(2)}`}}}}
+  });
+}
+
+// ── MAIN TABLE
+function populateTable(){
+  const sorted=[...countries].sort((a,b)=>b.market_score-a.market_score);
+  const tbody=document.querySelector('#mainTable tbody');
+  tbody.innerHTML=sorted.map((c,i)=>{
+    const gniVal=c.gni!==null?`$${c.gni.toLocaleString()}`:'N/A';
+    const gniFlag=c.gniSrc===VERIFIED?'':'<span class="est" title="Estimated">★</span>';
+    return`<tr>
+      <td><strong>${i+1}</strong></td>
+      <td><strong>${c.name}</strong></td>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${REGION_COLORS[c.region]};margin-right:5px;"></span>${c.region}</td>
+      <td>${c.pop.toFixed(1)}</td>
+      <td>${gniVal}${gniFlag}</td>
+      <td>${c.internet}% <small class="source-chip">${c.internetSrc.includes('est')?'★':''}</small></td>
+      <td>${c.mobile}%<span class="est" title="Estimated">★</span></td>
+      <td>$${c.health_spend}<span class="est" title="Some estimated">★</span></td>
+      <td><strong style="color:${priorityColor(c.priority)}">${c.market_score.toFixed(2)}</strong></td>
+      <td>${badgeHtml(c.priority)}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── COUNTRY SELECT
+function initCountrySelect(){
+  const sel=document.getElementById('countrySelect');
+  const sorted=[...countries].sort((a,b)=>b.market_score-a.market_score);
+  sel.innerHTML='<option value="">— Select a country —</option>'+
+    sorted.map(c=>`<option value="${c.name}">${c.name} | ${c.region} | Score: ${c.market_score.toFixed(2)}</option>`).join('');
+  let radar=null;
+  sel.addEventListener('change',function(){
+    const c=countries.find(x=>x.name===this.value);
+    if(!c)return;
+    document.getElementById('countryProfileArea').style.display='block';
+    renderProfile(c);
+    if(radar)radar.destroy();
+    radar=renderRadar(c);
+    renderScoreBars(c);
+    renderDetailPanels(c);
+  });
+}
+
+function renderProfile(c){
+  const gniDisplay=c.gni!==null?`$${c.gni.toLocaleString()}<span class="est" title="${c.gniSrc}">${c.gniSrc===VERIFIED?'':' ★'}</span>`:`N/A — ${c.gniSrc}`;
+  document.getElementById('countryProfileContent').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem;">
+      <div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--ink)">${c.name}</h2>
+        <div style="color:var(--smoke);font-size:.78rem;margin-top:.2rem;">${c.region} &nbsp;|&nbsp; Score: <strong style="color:${priorityColor(c.priority)}">${c.market_score.toFixed(2)}/10</strong></div>
+      </div>
+      ${badgeHtml(c.priority)}
+    </div>
+    <div class="profile-grid">
+      <div class="profile-block"><h4>Demographics</h4>
+        <div class="profile-row"><span class="pkey">Population (UN WPP 2024)</span><span class="pval">${c.pop}M</span></div>
+        <div class="profile-row"><span class="pkey">GNI/capita (WB 2023)</span><span class="pval">${gniDisplay}</span></div>
+        <div class="profile-row"><span class="pkey">Rural pop <span class="est">★</span></span><span class="pval">${c.rural}%</span></div>
+      </div>
+      <div class="profile-block"><h4>Digital Readiness</h4>
+        <div class="profile-row"><span class="pkey">Internet (${c.internetSrc.length>18?c.internetSrc.slice(0,18)+'…':c.internetSrc})</span><span class="pval">${c.internet}%</span></div>
+        <div class="profile-row"><span class="pkey">Mobile penetration (GSMA)</span><span class="pval">${c.mobile}%</span></div>
+        <div class="profile-row"><span class="pkey">Digital literacy <span class="est">★</span></span><span class="pval">${c.digital_lit}%</span></div>
+        <div class="profile-row"><span class="pkey">Health app usage <span class="est">★</span></span><span class="pval">${c.health_app}%</span></div>
+      </div>
+      <div class="profile-block"><h4>Health Economy</h4>
+        <div class="profile-row"><span class="pkey">Govt health spend/cap</span><span class="pval">$${c.health_spend} <span class="est">★</span></span></div>
+        <div class="profile-row"><span class="pkey">Health infra score <span class="est">★</span></span><span class="pval">${c.health_infra}/10</span></div>
+      </div>
+      <div class="profile-block"><h4>Data Sources</h4>
+        <div style="font-size:.72rem;color:var(--smoke);line-height:1.8;">
+          <div>GNI: <em>World Bank 2023</em></div>
+          <div>Internet: <em>${c.internetSrc}</em></div>
+          <div>Mobile: <em>${c.mobileSrc}</em></div>
+          <div>Health spend: <em>${c.health_spendSrc}</em></div>
+          <div>Pop: <em>UN WPP 2024</em></div>
+          <div><span class="est">★</span> = estimated</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderRadar(c){
+  const ctx=document.getElementById('radarChart');
+  return new Chart(ctx,{
+    type:'radar',
+    data:{
+      labels:['Internet %','Mobile %','Digital Lit ★','Health Infra ★','Health App ★','GNI Index'],
+      datasets:[{label:c.name,
+        data:[c.internet,Math.min(c.mobile,100),c.digital_lit,c.health_infra*10,c.health_app,
+              c.gni?(Math.min(c.gni/200,100)):0],
+        backgroundColor:REGION_COLORS[c.region]+'25',borderColor:REGION_COLORS[c.region],
+        borderWidth:2,pointBackgroundColor:REGION_COLORS[c.region]}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      scales:{r:{beginAtZero:true,max:100,ticks:{stepSize:20,font:{size:9}},grid:{color:'rgba(0,0,0,.08)'}}},
+      plugins:{legend:{labels:{font:{family:'DM Sans',size:11},boxWidth:12}},
+               tooltip:{callbacks:{afterLabel:()=>'★ = estimated'}}}}
+  });
+}
+
+function renderScoreBars(c){
+  const el=document.getElementById('scoreBarsContent');
+  const color=REGION_COLORS[c.region];
+  const metrics=[
+    {label:'Internet Penetration',val:c.internet,est:false,unit:'%',src:c.internetSrc},
+    {label:'Mobile Penetration (capped 100)',val:Math.min(c.mobile,100),est:false,unit:'%',src:c.mobileSrc},
+    {label:'Digital Literacy ★',val:c.digital_lit,est:true,unit:'%'},
+    {label:'Health Infrastructure ★',val:c.health_infra*10,est:true,unit:'/10'},
+    {label:'Health App Usage ★',val:c.health_app,est:true,unit:'%'},
+    {label:'Market Score',val:c.market_score*10,est:false,unit:'/10'},
+  ];
+  el.innerHTML='<div class="card-title">Metric Breakdown</div>'+
+    metrics.map(m=>`
+      <div style="margin-bottom:.75rem;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:.25rem;">
+          <span style="font-size:.75rem;color:var(--smoke)">${m.label}</span>
+          <span style="font-size:.75rem;font-weight:600;color:var(--ink)">${m.unit=='/10'?(m.val/10).toFixed(1)+m.unit:m.val+m.unit}</span>
+        </div>
+        <div class="score-bar">
+          <div class="score-bar-fill" style="width:${Math.min(m.val,100)}%;background:${color};"></div>
+        </div>
+        ${m.src?`<div style="font-size:.62rem;color:var(--smoke-light);margin-top:.15rem;">${m.src}</div>`:''}
+      </div>`).join('');
+}
+
+function renderDetailPanels(c){
+  const el=document.getElementById('detailPanels');
+  el.innerHTML=`
+    <div class="card">
+      <div class="card-body">
+        <div class="card-title">🏛️ Government Digital Health Initiatives</div>
+        <div class="detail-section">
+          <ul>${c.gov_initiatives.map(i=>`<li><span class="bullet">→</span> ${i}</li>`).join('')}</ul>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="card-title">🌡️ Climate Budget & NDC Commitments</div>
+        <div class="detail-section">
+          <ul><li><span class="bullet">→</span> ${c.climate_budget}</li></ul>
+          <p style="font-size:.7rem;color:var(--smoke);margin-top:.5rem;">Sources: UNDP Climate Finance Africa 2024, AfDB, UNFCCC NDC Registry, Mo Ibrahim Foundation March 2025</p>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="card-title">🤝 Key Partnership Organisations</div>
+        <div class="detail-section">
+          <div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.25rem;">
+            ${c.partner_orgs.map(o=>`<span class="org-tag">${o}</span>`).join('')}
+          </div>
+          <p style="font-size:.7rem;color:var(--smoke);margin-top:.75rem;">Sources: npj Digital Medicine 2023, USAID partner databases, WHO AFRO, PharmAccess, Frontiers in Digital Health 2025</p>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── COMPARISON
+function initComparison(){
+  const sel=document.getElementById('compareSelect');
+  const sorted=[...countries].sort((a,b)=>b.market_score-a.market_score);
+  sel.innerHTML=sorted.map(c=>`<option value="${c.name}">${c.name} (${c.region}) — ${c.market_score.toFixed(2)}</option>`).join('');
+  let cBar=null,cRadar=null;
+  document.getElementById('runCompare').addEventListener('click',()=>{
+    const sel2=document.getElementById('compareSelect');
+    const selected=Array.from(sel2.selectedOptions).map(o=>o.value);
+    if(selected.length<2){alert('Select at least 2 countries.');return;}
+    if(selected.length>5){alert('Max 5 countries.');return;}
+    const data=countries.filter(c=>selected.includes(c.name));
+    document.getElementById('compareResults').style.display='block';
+    if(cBar)cBar.destroy();if(cRadar)cRadar.destroy();
+    cBar=drawCompareBar(data);cRadar=drawCompareRadar(data);drawCompareTable(data);
+  });
+  document.getElementById('exportCompare').addEventListener('click',()=>{
+    const sel2=document.getElementById('compareSelect');
+    const selected=Array.from(sel2.selectedOptions).map(o=>o.value);
+    if(!selected.length){alert('Select countries first.');return;}
+    const data=countries.filter(c=>selected.includes(c.name));
+    const headers=['Country','Region','Pop(M)','GNI_USD_WB2023','Internet%_ITU2024','Mobile%_GSMA2024','HealthSpend_USD_WHO2023','MarketScore','Priority','eHealth_Initiatives','Climate_Budget'];
+    const rows=data.map(c=>[c.name,c.region,c.pop,c.gni||'N/A',c.internet,c.mobile,c.health_spend,c.market_score,c.priority,'"'+c.gov_initiatives.join('; ')+'"','"'+c.climate_budget+'"']);
+    const csv=[headers,...rows].map(r=>r.join(',')).join('\n');
+    const a=document.createElement('a');
+    a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+    a.download='halla_health_africa_v2_comparison.csv';a.click();
+  });
+}
+
+function drawCompareBar(data){
+  return new Chart(document.getElementById('compareBar'),{
+    type:'bar',
+    data:{labels:data.map(c=>c.name),
+      datasets:[{label:'Market Score',data:data.map(c=>c.market_score),backgroundColor:data.map((_,i)=>PALETTE[i]),borderRadius:7}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      scales:{y:{beginAtZero:true,max:8},x:{grid:{display:false}}},
+      plugins:{legend:{display:false}}}
+  });
+}
+function drawCompareRadar(data){
+  return new Chart(document.getElementById('compareRadar'),{
+    type:'radar',
+    data:{labels:['Internet','Mobile','Dig.Lit★','Health Infra★','App Usage★','GNI Index'],
+      datasets:data.map((c,i)=>({label:c.name,
+        data:[c.internet,Math.min(c.mobile,100),c.digital_lit,c.health_infra*10,c.health_app,c.gni?Math.min(c.gni/200,100):0],
+        backgroundColor:PALETTE[i]+'18',borderColor:PALETTE[i],borderWidth:2,pointBackgroundColor:PALETTE[i]}))},
+    options:{responsive:true,maintainAspectRatio:false,
+      scales:{r:{beginAtZero:true,max:100}},
+      plugins:{legend:{labels:{font:{family:'DM Sans',size:10},boxWidth:10}}}}
+  });
+}
+function drawCompareTable(data){
+  const thead=document.querySelector('#compareTable thead tr');
+  const tbody=document.querySelector('#compareTable tbody');
+  thead.innerHTML='<th>Metric</th>'+data.map(c=>`<th>${c.name}</th>`).join('');
+  const metrics=[
+    {label:'Region',fn:c=>c.region},
+    {label:'Population (M) — UN WPP 2024',fn:c=>c.pop},
+    {label:'GNI/cap USD — World Bank 2023',fn:c=>c.gni?'$'+c.gni.toLocaleString():'N/A'},
+    {label:'Internet % — ITU 2024',fn:c=>c.internet+'%'},
+    {label:'Mobile % — GSMA 2024',fn:c=>c.mobile+'%'},
+    {label:'Govt Health Spend/cap — WHO',fn:c=>'$'+c.health_spend+' ★'},
+    {label:'Health Infra Score ★',fn:c=>c.health_infra+'/10'},
+    {label:'Digital Literacy ★',fn:c=>c.digital_lit+'%'},
+    {label:'Health App Usage ★',fn:c=>c.health_app+'%'},
+    {label:'Market Score',fn:c=>`<strong style="color:${priorityColor(c.priority)}">${c.market_score.toFixed(2)}</strong>`},
+    {label:'Priority',fn:c=>badgeHtml(c.priority)},
+    {label:'eHealth Policy',fn:c=>c.gov_initiatives[0]||'—'},
+  ];
+  tbody.innerHTML=metrics.map(m=>`<tr><td><strong>${m.label}</strong></td>${data.map(c=>`<td>${m.fn(c)}</td>`).join('')}</tr>`).join('');
+}
+
+// ── REGION CHART
+function drawRegionChart(){
+  const r={};
+  countries.forEach(c=>{if(!r[c.region])r[c.region]={s:0,n:0};r[c.region].s+=c.market_score;r[c.region].n++;});
+  const labels=Object.keys(r),avgs=labels.map(k=>(r[k].s/r[k].n).toFixed(2)),colors=labels.map(k=>REGION_COLORS[k]);
+  new Chart(document.getElementById('regionChart'),{
+    type:'bar',
+    data:{labels,datasets:[{label:'Avg Score',data:avgs,backgroundColor:colors,borderRadius:7}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      scales:{y:{beginAtZero:true,max:7},x:{grid:{display:false}}},
+      plugins:{legend:{display:false}}}
+  });
+}
+
+
+// ═══════════════════════════════════════════════════════
+//  FUNDING LANDSCAPE DATA
+//  focus: 'halla' | 'chip' | 'both'
+//  category: multilateral | philanthropy | africa-funds | corporate | implementation
+// ═══════════════════════════════════════════════════════
+const FUNDERS = [
+  {
+    "id": "wb-dh",
+    "category": "multilateral",
+    "icon": "🌍",
+    "name": "World Bank — Digital Economy for Africa (DE4A)",
+    "amount": "$2.8B committed over last decade",
+    "focus": "both",
+    "desc": "The WB DE4A initiative funds large-scale digital infrastructure, eHealth platforms and health data systems. Active in Kenya, Nigeria, Ethiopia, Tanzania, South Africa, Egypt, Ghana, Rwanda. Priority areas include digital health records, telemedicine, and AI-driven diagnostics. Climate-health overlaps via digital agriculture & resilience systems.",
+    "halla_hook": "Direct entry point for national eHealth platform funding co-implementation; position Halla as the self-care layer on top of DE4A-funded national HIS infrastructure.",
+    "chip_hook": "Digital infrastructure is prerequisite for CHIP climate-health data systems. DE4A funds connectivity that enables climate early warning integrated with health.",
+    "mechanism": "Competitive grants, IDA credits, technical assistance",
+    "countries": [
+      "Kenya",
+      "Nigeria",
+      "Ethiopia",
+      "Tanzania",
+      "South Africa",
+      "Egypt",
+      "Ghana",
+      "Rwanda",
+      "Senegal",
+      "Uganda"
+    ],
+    "action": "Apply through MoH digital health departments in Phase 1 markets; engage WB country teams for co-design proposals.",
+    "url": "https://www.worldbank.org/en/programs/de4a"
+  },
+  {
+    "id": "wb-gcf",
+    "category": "multilateral",
+    "icon": "🌍",
+    "name": "Green Climate Fund (GCF)",
+    "amount": "$13.5B approved; Africa ~30% of portfolio",
+    "focus": "chip",
+    "desc": "GCF is the largest global climate fund. Its health-climate nexus window (2023 strategy update) now explicitly includes climate-health surveillance, early warning systems, and climate-resilient health infrastructure. All 54 African countries are eligible. Accredited national implementing entities (NIEs) in Kenya, Rwanda, South Africa (DBSA), and Egypt can channel funding.",
+    "halla_hook": "GCF digital infrastructure grants can fund connectivity and devices that underpin a climate-health self-care app layer.",
+    "chip_hook": "Core CHIP funder — climate-resilient health facility upgrades, early warning dashboards, heat-health alert systems, flood/drought health surveillance.",
+    "mechanism": "Grants, concessional loans, equity; requires Accredited Entity (AE) intermediary",
+    "countries": [
+      "Kenya",
+      "Rwanda",
+      "South Africa",
+      "Egypt",
+      "Morocco",
+      "Nigeria",
+      "Tanzania",
+      "Mozambique",
+      "Malawi",
+      "Ethiopia",
+      "Ghana",
+      "Senegal",
+      "Uganda",
+      "DRC",
+      "Zambia"
+    ],
+    "action": "Identify GCF-accredited national implementing entities in target markets. Develop concept note under Readiness & Preparatory Support Programme (no AE required for readiness grants up to $3M).",
+    "url": "https://www.greenclimate.fund"
+  },
+  {
+    "id": "gef",
+    "category": "multilateral",
+    "icon": "🌍",
+    "name": "Global Environment Facility (GEF)",
+    "amount": "$25.3B since 1991; GEF-8 cycle 2022-2026",
+    "focus": "chip",
+    "desc": "GEF funds biodiversity, climate, land degradation, and chemicals. Its Least Developed Countries Fund (LDCF) is key for 33 African LDCs needing climate adaptation. Recent approvals include a $9.45M grant for Zambezi Basin climate-resilient water governance (Feb 2026, per AfDB). Health-infrastructure linkage via WASH and food security.",
+    "halla_hook": "Indirect — GEF-funded community resilience projects create demand for health self-care tools.",
+    "chip_hook": "LDCF directly funds climate-adaptation infrastructure including health systems in LDCs. CHIP can co-design interventions under GEF-8 biodiversity-health nexus.",
+    "mechanism": "Grants via GEF agencies (AfDB, UNDP, UNEP, World Bank)",
+    "countries": [
+      "Ethiopia",
+      "Malawi",
+      "Niger",
+      "Burkina Faso",
+      "Mali",
+      "Chad",
+      "Sierra Leone",
+      "Mozambique",
+      "Madagascar",
+      "Zambia",
+      "Uganda",
+      "DRC",
+      "Tanzania",
+      "Senegal"
+    ],
+    "action": "Engage UNDP or AfDB as GEF Agency partner. Target LDCF window for health-climate submissions in LDC markets.",
+    "url": "https://www.thegef.org"
+  },
+  {
+    "id": "af",
+    "category": "multilateral",
+    "icon": "🌍",
+    "name": "Adaptation Fund (AF)",
+    "amount": "$1.3B+ committed; Africa priority region",
+    "focus": "chip",
+    "desc": "Directly accessible to national implementing entities without bilateral agency intermediary. Particularly valuable for African countries. Has funded climate-resilient health systems in Mozambique, Malawi, Senegal and others. Now explicitly includes digital early warning and health adaptation projects.",
+    "halla_hook": "Lower entry barrier than GCF. Adaptation Fund projects in health create deployment contexts for Halla.",
+    "chip_hook": "Core CHIP funder — health-climate adaptation projects, community health worker resilience tools, climate-proofed facilities.",
+    "mechanism": "Grants up to $10M; direct access for accredited national bodies",
+    "countries": [
+      "Mozambique",
+      "Malawi",
+      "Senegal",
+      "Tanzania",
+      "Rwanda",
+      "Kenya",
+      "Ghana",
+      "Nigeria",
+      "Ethiopia",
+      "Uganda"
+    ],
+    "action": "Identify Adaptation Fund accredited national implementing entities (NIEs) in target countries. Concept note submission is open-door; no pre-qualification needed.",
+    "url": "https://www.adaptation-fund.org"
+  },
+  {
+    "id": "usaid",
+    "category": "multilateral",
+    "icon": "🇺🇸",
+    "name": "USAID — Digital Health & PEPFAR",
+    "amount": "$7B+ annual PEPFAR; $500M+ digital health portfolio",
+    "focus": "both",
+    "desc": "USAID Bureau for Global Health funds digital health interventions across ~30 African countries. PEPFAR digital health platforms (OpenMRS, DHIS2) are operational in 15+ African markets. The Digital Health Activity and Digital Frontiers project specifically fund self-care digital tools and mHealth platforms. In 2024-25 budget pressures are real but health security track maintained.",
+    "halla_hook": "USAID has directly funded self-care digital health apps in Kenya, Tanzania, Nigeria, Uganda, Rwanda, Ethiopia. Halla could compete for cooperative agreements or be named as a local partner by prime implementers.",
+    "chip_hook": "USAID climate-health nexus: Climate Change and Health programming office funds climate-resilient health systems, heat action plans, disease surveillance upgrades.",
+    "mechanism": "Cooperative agreements, contracts (RFPs), small grants (up to $150K via SBIR-equivalent)",
+    "countries": [
+      "Kenya",
+      "Nigeria",
+      "Uganda",
+      "Tanzania",
+      "Rwanda",
+      "Ethiopia",
+      "Ghana",
+      "South Africa",
+      "Zambia",
+      "Malawi",
+      "Mozambique",
+      "Senegal",
+      "Egypt"
+    ],
+    "action": "Monitor Grants.gov and USAID Business Forecast for climate-health and digital health RFPs. Register on SAM.gov. Partner with established USAID prime implementers (Jhpiego, IntraHealth, DAI).",
+    "url": "https://www.usaid.gov/global-health/health-systems/digital-health"
+  },
+  {
+    "id": "eu-global",
+    "category": "multilateral",
+    "icon": "🇪🇺",
+    "name": "EU Global Gateway — Health & Digital",
+    "amount": "300B EUR commitment by 2027; Africa 150B EUR",
+    "focus": "both",
+    "desc": "The EU Global Gateway strategy has Africa health and digital as explicit pillars. Team Europe Health Initiative (TEHI) targets health system strengthening and pandemic preparedness in ACP countries. Digital 4 Development (D4D) Hub funds digital infrastructure and skills. Both align with Halla (digital self-care) and CHIP (climate-health infrastructure).",
+    "halla_hook": "EU D4D Hub funds digital health innovation in ACP countries. Halla could position as innovation partner in francophone Africa (Senegal, Cote d'Ivoire, Morocco).",
+    "chip_hook": "EU has committed to climate-health integration; EuropeAid and EIB fund climate-resilient infrastructure including health facilities in Africa.",
+    "mechanism": "ODA grants, EIB loans, blended finance; apply via EU delegations in country",
+    "countries": [
+      "Morocco",
+      "Tunisia",
+      "Senegal",
+      "Cote d'Ivoire",
+      "Ghana",
+      "Kenya",
+      "South Africa",
+      "Nigeria",
+      "Rwanda",
+      "Ethiopia",
+      "Egypt",
+      "Tanzania"
+    ],
+    "action": "Engage EU Delegations in Phase 1 and 2 markets. Monitor EuropeAid calls. Apply to EU-Africa Digital Acceleration Initiative.",
+    "url": "https://commission.europa.eu/strategy-and-policy/priorities-2019-2024/stronger-europe-world/global-gateway_en"
+  },
+  {
+    "id": "giz",
+    "category": "multilateral",
+    "icon": "🇩🇪",
+    "name": "GIZ (German Cooperation) — Digital Health & Climate",
+    "amount": "4B+ EUR annual Africa portfolio",
+    "focus": "both",
+    "desc": "GIZ operates digital health programs in Kenya, Rwanda, Tanzania, Nigeria, Ethiopia and others. Its Digital Solutions for Universal Health Coverage program (digiUHC) supports self-care and telemedicine. GIZ also leads climate adaptation programs — particularly the ProACT (Promoting Adaptation to Climate Change) and Integra programs linking climate risk to health system resilience.",
+    "halla_hook": "GIZ actively co-implements with private sector digital health innovators. ProHEALTH and DigiUHC are direct entry points for Halla pilots.",
+    "chip_hook": "GIZ climate-health nexus programs (ProACT, ENABEL) explicitly fund climate-resilient health infrastructure across Sahel, East Africa, and Southern Africa.",
+    "mechanism": "Implementing partner grants, co-design contracts, framework agreements",
+    "countries": [
+      "Kenya",
+      "Rwanda",
+      "Tanzania",
+      "Nigeria",
+      "Ethiopia",
+      "Ghana",
+      "South Africa",
+      "Senegal",
+      "Mozambique",
+      "Zambia",
+      "Uganda",
+      "Cameroon"
+    ],
+    "action": "Contact GIZ Health and Digital teams in Nairobi, Kigali, and Dar es Salaam. Submit expressions of interest to ongoing digiUHC and ProACT tenders.",
+    "url": "https://www.giz.de/en/worldwide/africa.html"
+  },
+  {
+    "id": "fcdo",
+    "category": "multilateral",
+    "icon": "🇬🇧",
+    "name": "UK FCDO — Better Health Programme & ICF",
+    "amount": "3B+ GBP health ODA; 11.6B GBP International Climate Finance",
+    "focus": "both",
+    "desc": "FCDO Better Health Programme (2021-2030, 340M GBP) funds digital health in Kenya, Nigeria, Tanzania, Ethiopia, Zimbabwe, Uganda. The International Climate Finance (ICF) window includes climate-resilient health systems as a priority post-COP26. FCDO has specifically named digital self-care and community health in its health equity strategy.",
+    "halla_hook": "Better Health Programme actively seeks private sector digital health partners; Halla self-care aligns directly with their health equity and gender-empowerment objectives.",
+    "chip_hook": "FCDO ICF funds climate-health resilience infrastructure; UK has pledged to prioritise Africa in adaptation finance scaling (named explicitly at COP28 Adaptation Finance Summit).",
+    "mechanism": "Open tenders, direct awards, challenge funds (e.g. Frontier Technologies Livestreaming)",
+    "countries": [
+      "Kenya",
+      "Nigeria",
+      "Tanzania",
+      "Ethiopia",
+      "Zimbabwe",
+      "Uganda",
+      "Rwanda",
+      "South Africa",
+      "Ghana",
+      "Malawi",
+      "Zambia",
+      "Mozambique"
+    ],
+    "action": "Monitor FCDO Development Tracker and Contracts Finder. Engage FCDO country health leads. Apply to FCDO Frontier Health Markets Engage programme.",
+    "url": "https://www.gov.uk/government/organisations/foreign-commonwealth-development-office"
+  },
+  {
+    "id": "korea-koica",
+    "category": "multilateral",
+    "icon": "🇰🇷",
+    "name": "KOICA — Korea Digital Health ODA",
+    "amount": "$1B+ total Korea ODA in Africa",
+    "focus": "halla",
+    "desc": "Korea International Cooperation Agency (KOICA) has significantly expanded digital health and telemedicine ODA to Africa since 2020. Active in Kenya, Rwanda, Ghana, Tanzania, Ethiopia, and Nigeria with mHealth, telemedicine, and digital hospital information systems. Strong alignment with digital self-care platforms.",
+    "halla_hook": "KOICA digital health programs directly fund mHealth and self-care platform deployment. Korean government explicitly prioritises digital transformation in health as an ODA priority.",
+    "chip_hook": "Limited direct CHIP alignment; climate adaptation is not a primary KOICA health focus.",
+    "mechanism": "Project grants, technical assistance, in-kind support",
+    "countries": [
+      "Kenya",
+      "Rwanda",
+      "Ghana",
+      "Tanzania",
+      "Ethiopia",
+      "Nigeria",
+      "Uganda"
+    ],
+    "action": "Engage KOICA country offices and Korean Embassy health attaches in Phase 1 markets. Contact KOICA HQ digital health desk in Seoul.",
+    "url": "https://www.koica.go.kr/sites/koica_en/index.do"
+  },
+  {
+    "id": "afdb",
+    "category": "multilateral",
+    "icon": "🌍",
+    "name": "African Development Bank — Climate Action Window & Digital Health",
+    "amount": "$25B AAAP target; $31M+ approved 2024",
+    "focus": "both",
+    "desc": "AfDB is Africa's preeminent development bank. Its Climate Action Window (launched 2022) provides grants for climate resilience in 37 LDCs, and has approved $31M+ in 2024 for Sierra Leone, South Sudan, Djibouti and Madagascar. Its digital health strategy supports eHealth platforms. AfDB also leads the Africa Adaptation Acceleration Program (AAAP) with GCA — a $25B platform. COP30 pledges aligned with climate-health nexus.",
+    "halla_hook": "AfDB digital economy programs fund connectivity and health platforms; position Halla as a climate-health self-care layer on AfDB-funded national digital infrastructure.",
+    "chip_hook": "Core CHIP funder — Climate Action Window directly funds climate-resilient health and infrastructure. AAAP includes digital climate advisory services (Ghana and Zambia highlighted by GCA 2025).",
+    "mechanism": "Grants (Climate Action Window), concessional loans, equity, technical assistance. Countries access via AfDB country offices.",
+    "countries": [
+      "Sierra Leone",
+      "South Sudan",
+      "Djibouti",
+      "Madagascar",
+      "Rwanda",
+      "Kenya",
+      "Ghana",
+      "Nigeria",
+      "Ethiopia",
+      "Zambia",
+      "Tanzania",
+      "Senegal",
+      "Morocco",
+      "Egypt",
+      "DRC"
+    ],
+    "action": "Engage AfDB country offices and the Climate Change and Green Growth Department. Submit proposals under the Climate Action Window readiness facility.",
+    "url": "https://www.afdb.org"
+  },
+  {
+    "id": "bmgf",
+    "category": "philanthropy",
+    "icon": "💛",
+    "name": "Bill & Melinda Gates Foundation — Global Health & Digital",
+    "amount": "$6B+ annual global health grants",
+    "focus": "both",
+    "desc": "BMGF is the world's largest private health funder. Grand Challenges Africa (with African Academy of Sciences) is a key mechanism — funding digital health innovations up to $100K (exploration) and $1M+ (transition). BMGF has funded M-TIBA (Kenya), digital diagnostics, and self-care platforms across Nigeria, Kenya, Ethiopia, Tanzania. Its gender and primary health care strategies align tightly with Halla's value proposition.",
+    "halla_hook": "Grand Challenges Africa explicitly funds digital self-care, mHealth and CHW-facing digital tools. Multiple rounds open per year. Halla self-care platform fits the Women's Health and Primary Health Care grand challenges.",
+    "chip_hook": "BMGF agriculture and climate-health overlaps via food security and malnutrition programs; indirect CHIP alignment.",
+    "mechanism": "Grand Challenges grants ($100K-$1M+), direct program grants, co-investment",
+    "countries": [
+      "Kenya",
+      "Nigeria",
+      "Ethiopia",
+      "Tanzania",
+      "Ghana",
+      "Rwanda",
+      "South Africa",
+      "Uganda",
+      "Senegal",
+      "Malawi",
+      "Mozambique"
+    ],
+    "action": "Apply to Grand Challenges Africa — next round typically opens Q1 annually. Contact BMGF Africa Region Program Officers in Nairobi and Abuja.",
+    "url": "https://www.gatesfoundation.org"
+  },
+  {
+    "id": "wellcome",
+    "category": "philanthropy",
+    "icon": "💛",
+    "name": "Wellcome Trust — Global Health & Climate",
+    "amount": "1B+ GBP annual grants; Our Planet Our Health 80M GBP",
+    "focus": "both",
+    "desc": "Wellcome's Our Planet Our Health (OPOH) programme (80M GBP, 2021-2025) is a major climate-health funder, specifically targeting health impacts of climate change in LMICs. Its Global Health research and Innovations programmes fund digital health tools and mHealth evidence-building. Africa has a major Wellcome research presence (KEMRI-Wellcome Kenya, MRC Gambia, Malawi).",
+    "halla_hook": "Wellcome funds digital health evidence in Africa; a research partnership with a Wellcome-funded institution (e.g. KEMRI-Wellcome, MRC Gambia) would legitimise Halla and generate evidence for scale.",
+    "chip_hook": "Our Planet Our Health is a direct CHIP funder — explicitly funding climate-health research and systems in Africa.",
+    "mechanism": "OPOH grants (250K-5M GBP), Innovator Awards, Research Partnership grants",
+    "countries": [
+      "Kenya",
+      "Malawi",
+      "Gambia",
+      "Ghana",
+      "Nigeria",
+      "South Africa",
+      "Uganda",
+      "Tanzania",
+      "Ethiopia",
+      "Rwanda"
+    ],
+    "action": "Apply to OPOH Innovation & Partnerships call (open rounds). Pursue institutional partnership with KEMRI-Wellcome (Kenya) or MRC Unit Gambia for co-designed submission.",
+    "url": "https://wellcome.org/what-we-do/our-work/our-planet-our-health"
+  },
+  {
+    "id": "rockefeller",
+    "category": "philanthropy",
+    "icon": "💛",
+    "name": "Rockefeller Foundation — Power & Planetary Health",
+    "amount": "$500M+ annual; Planetary Health focus",
+    "focus": "chip",
+    "desc": "The Rockefeller Foundation's Planetary Health strategy specifically links climate change and health systems in Africa and Asia. It funds AI-health systems, food-health linkages, and resilient health infrastructure. The 100 Resilient Cities initiative created urban health-climate frameworks in Accra, Nairobi, Cape Town and others. Emerging focus on digital tools for climate-adaptive health delivery.",
+    "halla_hook": "Rockefeller increasingly funds digital tools at the climate-health nexus; Halla could feature in planetary health demonstrations.",
+    "chip_hook": "Core CHIP-aligned funder. Health-climate nexus is the Rockefeller Foundation's primary strategic focus for 2023-2030.",
+    "mechanism": "Program grants ($250K-$5M), co-design labs, accelerators",
+    "countries": [
+      "Kenya",
+      "Ghana",
+      "South Africa",
+      "Nigeria",
+      "Rwanda",
+      "Senegal",
+      "Tanzania",
+      "Uganda",
+      "Ethiopia"
+    ],
+    "action": "Engage Rockefeller's Africa Programmes team. Target the Planetary Health Accelerator and the Africa/Asia Climate and Health initiative.",
+    "url": "https://www.rockefellerfoundation.org"
+  },
+  {
+    "id": "aga-khan",
+    "category": "philanthropy",
+    "icon": "💛",
+    "name": "Aga Khan Development Network (AKDN) — Health & Infrastructure",
+    "amount": "$880M+ annual development spend",
+    "focus": "both",
+    "desc": "AKDN health arm (Aga Khan Health Services, AKHS) operates hospitals, clinics and community health programs across East Africa (Kenya, Tanzania, Uganda, Mozambique, Egypt). It has explicitly invested in telemedicine and digital health since 2020. AKDN investment arm (AKF) also funds climate-resilient community infrastructure. As an existing operating partner (not just a funder), AKDN is one of the most strategically valuable partners for Halla.",
+    "halla_hook": "AKHS clinics and community health programs are potential deployment channels for Halla's self-care platform. AKDN could co-fund and co-implement pilot deployments.",
+    "chip_hook": "AKDN funds climate-resilient infrastructure in climate-vulnerable communities where CHIP is most needed.",
+    "mechanism": "Program grants, equity co-investment, direct partnership agreements",
+    "countries": [
+      "Kenya",
+      "Tanzania",
+      "Uganda",
+      "Mozambique",
+      "Egypt",
+      "Rwanda",
+      "South Africa"
+    ],
+    "action": "Engage Aga Khan University Hospital digital health leads in Nairobi. Contact Aga Khan Foundation East Africa for partnership discussions.",
+    "url": "https://www.akdn.org"
+  },
+  {
+    "id": "masters",
+    "category": "philanthropy",
+    "icon": "💛",
+    "name": "Mastercard Foundation — Young Africa Works",
+    "amount": "$3B+ committed 2020-2030",
+    "focus": "halla",
+    "desc": "The Mastercard Foundation's Young Africa Works strategy targets 30M dignified jobs, with a strong digital skills and financial inclusion component. Its health focus includes digital health job creation and platform development for youth. The Foundation funds mHealth, community health workers (CHWs), and digital self-care tools as part of economic participation programs. Active in 12+ African countries.",
+    "halla_hook": "Young Africa Works explicitly funds digital platforms that create health-related economic opportunities. Halla could be positioned as both a self-care platform and a CHW economic empowerment tool.",
+    "chip_hook": "Limited direct CHIP alignment; focus is economic/digital rather than climate-health infrastructure.",
+    "mechanism": "Program grants, challenge funds, direct investment through intermediaries",
+    "countries": [
+      "Kenya",
+      "Rwanda",
+      "Ghana",
+      "Nigeria",
+      "Ethiopia",
+      "Uganda",
+      "Tanzania",
+      "Senegal",
+      "Egypt",
+      "South Africa",
+      "Mozambique"
+    ],
+    "action": "Contact Mastercard Foundation Program Officers for Africa East and West. Look for calls under digital tools for health and economic inclusion annually.",
+    "url": "https://mastercardfdn.org"
+  },
+  {
+    "id": "undp-cp",
+    "category": "philanthropy",
+    "icon": "🌐",
+    "name": "UNDP Climate Promise & SDG Impact",
+    "amount": "Largest global NDC support covering 120+ countries",
+    "focus": "chip",
+    "desc": "UNDP Climate Promise is the world's largest NDC support platform, covering 40 African countries. It directly funds NDC implementation, including health-climate integration. SDG Impact facilitates private sector alignment with SDG-linked health and climate investments. The Africa Sustainable Development Network is a key engagement route for both Halla and CHIP.",
+    "halla_hook": "UNDP SDG Impact can facilitate Halla's alignment with national SDG 3 (health) and SDG 13 (climate) frameworks, accelerating government buy-in.",
+    "chip_hook": "Climate Promise directly funds climate-health NDC components across Africa — highest alignment for CHIP.",
+    "mechanism": "Technical assistance grants, country programme co-design, SDG Investor Maps",
+    "countries": [
+      "Kenya",
+      "Rwanda",
+      "Ethiopia",
+      "Nigeria",
+      "Ghana",
+      "Senegal",
+      "Tanzania",
+      "Uganda",
+      "Mozambique",
+      "Malawi",
+      "Niger",
+      "Mali",
+      "Zambia",
+      "DRC",
+      "Morocco"
+    ],
+    "action": "Engage UNDP country offices and the Africa Regional Hub (Addis Ababa). Submit co-design proposals via Climate Promise national focal points.",
+    "url": "https://climatepromise.undp.org"
+  },
+  {
+    "id": "aaap",
+    "category": "africa-funds",
+    "icon": "🌿",
+    "name": "Africa Adaptation Acceleration Program (AAAP)",
+    "amount": "$25B target by end-2025; $18B+ shaped",
+    "focus": "chip",
+    "desc": "A partnership between the Global Center on Adaptation (GCA) and AfDB. AAAP leveraging ratio is 1:100 — every $1 of AAAP investment shapes $100 in climate-resilient development finance. It explicitly includes digital climate advisory services (highlighted for Ghana and Zambia in 2025). At UNGA79, AAAP won Best Investable NDC Adaptation Investment Initiative. Directly relevant to climate-resilient health infrastructure across 40 countries.",
+    "halla_hook": "AAAP digital advisory component could include self-care health tools integrated with climate early warning for communities.",
+    "chip_hook": "Core CHIP vehicle — AAAP specifically funds nature-based solutions, community-driven design, and digital climate advisory that overlaps with climate-health infrastructure.",
+    "mechanism": "Blended finance, AfDB programme grants, multilateral co-financing",
+    "countries": [
+      "Ghana",
+      "Zambia",
+      "Kenya",
+      "Rwanda",
+      "Nigeria",
+      "Ethiopia",
+      "Tanzania",
+      "Senegal",
+      "South Africa",
+      "Mozambique",
+      "Malawi",
+      "Niger",
+      "Burkina Faso"
+    ],
+    "action": "Engage GCA Africa team and AfDB Climate Change & Green Growth Department. Frame CHIP as an investable adaptation solution for AAAP pipeline.",
+    "url": "https://gca.org/programs/aaap/"
+  },
+  {
+    "id": "arc",
+    "category": "africa-funds",
+    "icon": "🌿",
+    "name": "African Risk Capacity (ARC) — Climate Insurance & Health",
+    "amount": "$1.2B+ coverage provided since 2012",
+    "focus": "chip",
+    "desc": "ARC provides parametric climate insurance to African governments, enabling rapid financing for disaster response including health emergencies. ARC Replica enables private sector to participate. Its Extreme Climate Facility (XCF) directly links climate events to health impact financing. An increasingly important vehicle for climate-health financing as Africa faces more frequent extreme events.",
+    "halla_hook": "ARC post-disaster health response creates demand for rapid digital health service deployment — Halla as a tool for climate-affected communities.",
+    "chip_hook": "ARC is a core CHIP finance mechanism — parametric insurance that covers climate-health events, enabling faster response and infrastructure recovery.",
+    "mechanism": "Parametric insurance, sovereign risk pooling, Replica market participation",
+    "countries": [
+      "Kenya",
+      "Ethiopia",
+      "Malawi",
+      "Senegal",
+      "Niger",
+      "Burkina Faso",
+      "Mali",
+      "Mauritania",
+      "Cameroon",
+      "Zimbabwe",
+      "Zambia",
+      "Tanzania"
+    ],
+    "action": "Engage ARC Secretariat in Johannesburg. Explore ARC Replica as a CHIP blended finance mechanism. Partner with ARC for climate-health early warning data integration.",
+    "url": "https://www.africanriskcapacity.org"
+  },
+  {
+    "id": "acef",
+    "category": "africa-funds",
+    "icon": "🌿",
+    "name": "African Circular Economy Fund (ACEF)",
+    "amount": "Created by AfDB 2022; Finland, Nordic Development Fund co-funders",
+    "focus": "chip",
+    "desc": "ACEF is the only trust fund dedicated exclusively to integrating the circular economy as a strategy for green and inclusive growth in Africa. Funded by AfDB with Finland and the Nordic Development Fund. Recently supported innovators in Rwanda (Incuti Foods). The health-circular economy nexus (medical waste, packaging, supply chain) is a growing funding opportunity.",
+    "halla_hook": "Indirect alignment; circular health economy (medical waste management, sustainable supply chains) creates health system context for Halla.",
+    "chip_hook": "Green infrastructure and circular economy for health systems is a CHIP-adjacent opportunity — sustainable health facility design and operations.",
+    "mechanism": "Grants to African businesses and innovators via AfDB country offices",
+    "countries": [
+      "Rwanda",
+      "Kenya",
+      "Ghana",
+      "Nigeria",
+      "South Africa",
+      "Ethiopia",
+      "Tanzania",
+      "Uganda"
+    ],
+    "action": "Engage AfDB ACEF Fund Manager. Frame circular health economy projects (e.g. sustainable medical supply chains) for funding.",
+    "url": "https://www.afdb.org/en/topics-and-sectors/initiatives-partnerships/african-circular-economy-facility"
+  },
+  {
+    "id": "sadc-climate",
+    "category": "africa-funds",
+    "icon": "🌿",
+    "name": "SADC Climate Services Centre & Southern Africa Climate Fund",
+    "amount": "Regional fund; amounts vary by cycle",
+    "focus": "chip",
+    "desc": "The Southern African Development Community (SADC) Climate Services Centre provides climate data and early warning to 16 member states. The SADC Fund for climate adaptation finances health-climate projects. Particularly relevant for Southern Africa markets (South Africa, Botswana, Zambia, Zimbabwe, Namibia, Malawi, Mozambique, eSwatini, Lesotho).",
+    "halla_hook": "SADC climate-health data infrastructure could integrate with Halla for community-level climate-health advisory.",
+    "chip_hook": "Core CHIP regional mechanism for Southern Africa — climate services, early warning, and health system resilience.",
+    "mechanism": "Regional programme grants, technical assistance, multi-country initiatives",
+    "countries": [
+      "South Africa",
+      "Botswana",
+      "Zambia",
+      "Zimbabwe",
+      "Namibia",
+      "Malawi",
+      "Mozambique",
+      "eSwatini",
+      "Lesotho",
+      "Tanzania"
+    ],
+    "action": "Engage SADC Climate Services Centre (Gaborone). Partner with SADC Secretariat Health and Climate departments for multi-country CHIP proposal.",
+    "url": "https://www.sadc.int"
+  },
+  {
+    "id": "ea-community",
+    "category": "africa-funds",
+    "icon": "🌿",
+    "name": "East African Community — EAC Digital Health & Climate Fund",
+    "amount": "EAC + partner-funded regional programmes",
+    "focus": "both",
+    "desc": "The EAC has a Health Policy Framework and an emerging Digital Economy Programme. East Africa is the most active region for digital health innovation (Kenya, Rwanda, Uganda, Tanzania). The EAC cross-border digital health framework creates multi-country deployment opportunities. Climate-resilience programs span the region.",
+    "halla_hook": "EAC digital health frameworks enable multi-country Halla deployment with single regulatory engagement — high strategic leverage.",
+    "chip_hook": "EAC climate-health initiatives focus on cross-border disease surveillance, climate early warning, and resilient infrastructure in the Great Lakes region.",
+    "mechanism": "Regional programme co-financing, partner grants, technical assistance",
+    "countries": [
+      "Kenya",
+      "Rwanda",
+      "Uganda",
+      "Tanzania",
+      "Burundi",
+      "DRC",
+      "South Sudan",
+      "Somalia"
+    ],
+    "action": "Engage EAC Secretariat (Arusha) Health and ICT departments. Explore EAC Digital Health Regional Framework as a multi-country Halla entry strategy.",
+    "url": "https://www.eac.int"
+  },
+  {
+    "id": "africa-cdc-fund",
+    "category": "africa-funds",
+    "icon": "🌿",
+    "name": "Africa CDC — Africa Health Security Partnership",
+    "amount": "$3.3B+ committed under Agenda 2063",
+    "focus": "both",
+    "desc": "Africa CDC is the African Union's public health agency. Its New Public Health Order initiative (post-COVID) includes digital health surveillance, community health platforms, and health security financing. Africa CDC has explicitly included climate-health in its One Health strategy. As a pan-African institution, it provides policy legitimacy and potential co-implementation for both Halla and CHIP.",
+    "halla_hook": "Africa CDC digital health surveillance and community health platforms are natural co-implementation partners for Halla self-care tools at scale.",
+    "chip_hook": "Africa CDC One Health and climate-health strategies align with CHIP — surveillance systems, zoonotic disease early warning, climate-health analytics.",
+    "mechanism": "Programme co-implementation, data sharing agreements, policy advocacy, technical assistance",
+    "countries": [
+      "South Africa",
+      "Kenya",
+      "Nigeria",
+      "Ethiopia",
+      "Rwanda",
+      "Ghana",
+      "Egypt",
+      "Senegal",
+      "Tanzania",
+      "Morocco",
+      "Cote d'Ivoire"
+    ],
+    "action": "Engage Africa CDC digital health team (Addis Ababa HQ). Participate in Africa CDC One Health conferences. Seek co-implementation MOU for digital health platforms.",
+    "url": "https://africacdc.org"
+  },
+  {
+    "id": "mtn-momo",
+    "category": "corporate",
+    "icon": "⚡",
+    "name": "MTN Group — MoMo Health & Digital Finance Innovation",
+    "amount": "$220B Africa GDP contribution (GSMA 2024); 280M+ MoMo users",
+    "focus": "halla",
+    "desc": "MTN is Africa's largest telco by subscriber count, operating in 19 African countries. MTN Mobile Money (MoMo) has 280M+ registered users and is already used for health payments in Ghana, Uganda, Cameroon, and Zambia. MTN has a dedicated Digital and Fintech strategy (2022-2025) explicitly including health insurance micro-payments. Its Ayoba super-app is a distribution channel. MTN 5G FWA expansion (GSMA 2024) is creating connectivity for digital health.",
+    "halla_hook": "MTN MoMo integration enables Halla premium subscription and pay-per-use models for health self-care across 19 markets. Ayoba super-app distribution.",
+    "chip_hook": "MTN rural connectivity expansion (5G FWA) creates the infrastructure prerequisite for CHIP remote health monitoring.",
+    "mechanism": "Commercial partnerships, API integration, co-branded products, innovation challenges",
+    "countries": [
+      "South Africa",
+      "Nigeria",
+      "Ghana",
+      "Uganda",
+      "Cameroon",
+      "Zambia",
+      "Rwanda",
+      "Cote d'Ivoire",
+      "Senegal",
+      "Benin",
+      "Congo-Brazzaville",
+      "eSwatini",
+      "Namibia",
+      "Guinea",
+      "Liberia",
+      "Sierra Leone",
+      "Sudan",
+      "South Sudan"
+    ],
+    "action": "Engage MTN Group Digital & Fintech team (Johannesburg HQ). Pilot MoMo-integrated Halla subscription in Ghana (MTN and Zipline synergy market). Join MTN Developers platform.",
+    "url": "https://www.mtn.com"
+  },
+  {
+    "id": "safaricom",
+    "category": "corporate",
+    "icon": "⚡",
+    "name": "Safaricom — M-Pesa Health & M-TIBA Platform",
+    "amount": "$3.2B revenue; 31M M-Pesa users in Kenya",
+    "focus": "halla",
+    "desc": "Safaricom M-TIBA is Africa's largest mobile health financing platform (2M+ enrolled users in Kenya). M-Pesa is the world's most successful mobile money platform. Safaricom is expanding into Ethiopia (2022) with a consortium including Vodafone. The M-TIBA platform was built with PharmAccess and CarePay — a proven digital health payment infrastructure that Halla could integrate.",
+    "halla_hook": "M-TIBA integration would immediately connect Halla to 2M+ health-saving users in Kenya. M-Pesa micro-payment API enables subscription and pay-per-consult models.",
+    "chip_hook": "Safaricom connectivity (4G coverage >99% of Kenya) is prerequisite infrastructure for CHIP remote monitoring in East Africa.",
+    "mechanism": "Commercial API partnerships, M-TIBA integration, innovation challenges via Safaricom Spark",
+    "countries": [
+      "Kenya",
+      "Ethiopia",
+      "Tanzania (via Vodacom)"
+    ],
+    "action": "Contact Safaricom Spark (innovation lab) and M-TIBA partnership team (CarePay). Apply to Safaricom Innovation Challenge. Explore M-Pesa integration for Halla subscription billing.",
+    "url": "https://www.safaricom.co.ke"
+  },
+  {
+    "id": "google-africa",
+    "category": "corporate",
+    "icon": "⚡",
+    "name": "Google — Africa Investment Fund & Google.org",
+    "amount": "$1B Africa investment; Google.org $100M+ grants",
+    "focus": "both",
+    "desc": "Google committed $1B to Africa for infrastructure (Equiano cable through Togo, Nigeria, Namibia, SA), digital skills, and startup investment. Google.org has funded digital health and climate NGOs across the continent. Google Cloud has Africa data centres (South Africa, with Kenya and Nigeria planned). Google AI for Social Good programme has funded health and climate AI projects in Africa.",
+    "halla_hook": "Google Cloud credits for health startups, Google.org grant opportunities, Play Store distribution — all directly relevant to Halla.",
+    "chip_hook": "Google AI for Social Good has funded climate-health prediction models and early warning systems in Africa. Equiano cable improves connectivity prerequisite for CHIP.",
+    "mechanism": "Google.org grants ($50K-$2M), Google for Startups Africa, Cloud for Nonprofits credits",
+    "countries": [
+      "Nigeria",
+      "Kenya",
+      "South Africa",
+      "Tanzania",
+      "Ghana",
+      "Rwanda",
+      "Uganda",
+      "Ethiopia",
+      "Egypt",
+      "Morocco",
+      "Togo",
+      "Namibia"
+    ],
+    "action": "Apply to Google.org Impact Challenge Africa (open annually). Join Google for Startups Africa program. Apply for Google Cloud for Nonprofits credits.",
+    "url": "https://www.google.org"
+  },
+  {
+    "id": "meta-africa",
+    "category": "corporate",
+    "icon": "⚡",
+    "name": "Meta (Facebook) — Connectivity Lab & WhatsApp Health",
+    "amount": "2Africa cable co-funder; WhatsApp Business API ecosystem",
+    "focus": "halla",
+    "desc": "Meta co-funded the 2Africa subsea cable (with MTN, Vodafone, Orange, others) — the longest subsea cable in the world, massively increasing African bandwidth. WhatsApp (2B+ global users, dominant in Africa) has been used for mHealth service delivery in SA, Kenya, Nigeria and others. Meta Connectivity Lab funds rural internet access across the continent.",
+    "halla_hook": "WhatsApp Business API is a low-cost Halla delivery channel for health content, reminders, and basic triage — reaching users without app downloads.",
+    "chip_hook": "2Africa cable and rural connectivity reduce the infrastructure barrier for CHIP remote monitoring in coastal and rural markets.",
+    "mechanism": "WhatsApp Business API, Meta for Developers grants, connectivity partnerships",
+    "countries": [
+      "Nigeria",
+      "Kenya",
+      "South Africa",
+      "Ghana",
+      "Tanzania",
+      "Ethiopia",
+      "Egypt",
+      "Morocco",
+      "Senegal",
+      "Cote d'Ivoire"
+    ],
+    "action": "Integrate Halla with WhatsApp Business API for low-data health delivery. Engage Meta for Social Good for content partnerships. Explore 2Africa coastal landing-country markets as CHIP pilots.",
+    "url": "https://www.facebook.com/connectivity"
+  },
+  {
+    "id": "dfc",
+    "category": "corporate",
+    "icon": "⚡",
+    "name": "US DFC — Blended Finance for Health & Climate",
+    "amount": "$60B global portfolio; Prosper Africa initiative",
+    "focus": "both",
+    "desc": "The US Development Finance Corporation (DFC) under Prosper Africa provides equity, debt, and guarantees for private sector investment in Africa. Health and climate are both priority sectors. DFC has co-financed digital health companies and climate-resilient infrastructure in Africa. With USAID budget pressures, DFC is increasingly important for private sector health and climate finance.",
+    "halla_hook": "DFC can provide debt or equity for Halla Africa expansion as a for-profit or social enterprise digital health company.",
+    "chip_hook": "DFC climate-resilient infrastructure guarantees and equity can de-risk CHIP pilot and scale-up investments.",
+    "mechanism": "Loans, equity, insurance, technical assistance; minimum $1M projects",
+    "countries": [
+      "Kenya",
+      "Nigeria",
+      "South Africa",
+      "Ghana",
+      "Rwanda",
+      "Egypt",
+      "Ethiopia",
+      "Tanzania",
+      "Senegal",
+      "Morocco"
+    ],
+    "action": "Engage DFC Prosper Africa Health and Climate teams. Prepare investment prospectus for DFC equity/debt review. Connect with DFC country representatives via US Embassy commercial offices.",
+    "url": "https://www.dfc.gov"
+  },
+  {
+    "id": "tef",
+    "category": "corporate",
+    "icon": "⚡",
+    "name": "Tony Elumelu Foundation — TEF Entrepreneurship Programme",
+    "amount": "$100M committed; 18,000+ funded entrepreneurs",
+    "focus": "halla",
+    "desc": "The Tony Elumelu Foundation is Africa's most prominent African-led entrepreneurship platform. Its annual TEF Entrepreneurship Programme funds 1,000 African startups with $5,000 seed capital plus mentorship across 54 countries. Health tech and digital innovation are priority sectors. Multiple digital health startups including Helium Health (Nigeria) have TEF alumni connections.",
+    "halla_hook": "TEF could fund Halla in-country implementation partner startups, or a Halla TEF application for initial seed/pilot funding across multiple African markets.",
+    "chip_hook": "Limited direct CHIP alignment; focused on entrepreneurship over climate infrastructure.",
+    "mechanism": "$5,000 non-refundable seed capital + $5,000 business advisory services",
+    "countries": [
+      "Nigeria",
+      "Kenya",
+      "Ghana",
+      "Rwanda",
+      "Senegal",
+      "Cote d'Ivoire",
+      "Tanzania",
+      "Uganda",
+      "Ethiopia",
+      "Egypt",
+      "South Africa",
+      "Morocco",
+      "Cameroon",
+      "Zambia"
+    ],
+    "action": "Apply to TEF Programme (annual deadline). Identify TEF alumni health entrepreneurs as Halla in-country implementation partners.",
+    "url": "https://www.tonyelumelufoundation.org"
+  },
+  {
+    "id": "catalyst",
+    "category": "corporate",
+    "icon": "⚡",
+    "name": "Catalytic Funding: GSMA Connected Women & mHealth Challenges",
+    "amount": "Various challenge funds; $1-10M per round",
+    "focus": "halla",
+    "desc": "GSMA Connected Women funds mobile-enabled services that close the gender gap in Africa. mHealth innovation challenges (GSMA, UKAID, Gates) provide $250K-$2M for scalable mobile health platforms. The Orange Social Venture Prize (West Africa focus), Seedstars Africa, and Startupbootcamp AfriTech also offer non-dilutive challenge funding for digital health.",
+    "halla_hook": "Multiple competitions directly targeting mHealth/digital self-care platform innovation in Africa. Halla fits these precisely — self-care, gender health, primary care access.",
+    "chip_hook": "Some challenge funds include climate-health categories; monitor for new rounds.",
+    "mechanism": "Challenge prizes, accelerator programs, seed grants",
+    "countries": [
+      "Kenya",
+      "Nigeria",
+      "Ghana",
+      "South Africa",
+      "Rwanda",
+      "Senegal",
+      "Cote d'Ivoire",
+      "Tanzania",
+      "Uganda",
+      "Ethiopia",
+      "Egypt",
+      "Morocco"
+    ],
+    "action": "Apply to GSMA Connected Women grant programme. Monitor Seedstars Africa (annual). Enter Orange Social Venture Prize for Francophone West Africa. Join Startupbootcamp AfriTech accelerator.",
+    "url": "https://www.gsma.com/connected-women"
+  },
+  {
+    "id": "pharmaccess",
+    "category": "implementation",
+    "icon": "🤝",
+    "name": "PharmAccess Foundation",
+    "amount": "Operating partner; funders include Gates, USAID, Dutch MFA",
+    "focus": "halla",
+    "desc": "PharmAccess is one of Africa's most influential digital health implementing organisations, operating in Kenya, Nigeria, Ghana, Tanzania, and Rwanda. It built M-TIBA (with Safaricom and CarePay), Akili mHealth platform, and SafeCare quality improvement system for 5,000+ health facilities. PharmAccess combines digital health platform development with health financing innovation — a near-perfect Halla implementation partner.",
+    "halla_hook": "PharmAccess is the leading digital health implementation partner for East and West Africa. A co-design or licensing partnership with PharmAccess could accelerate Halla deployment through existing facility and community networks.",
+    "chip_hook": "PharmAccess facility networks and SafeCare quality data provide infrastructure for CHIP health facility climate assessments.",
+    "mechanism": "Partnership agreements, co-implementation, licensing, data sharing",
+    "countries": [
+      "Kenya",
+      "Nigeria",
+      "Ghana",
+      "Tanzania",
+      "Rwanda"
+    ],
+    "action": "Contact PharmAccess Netherlands (Amsterdam) and Nairobi office. Request partnership meeting to explore Halla integration with M-TIBA and Akili platforms.",
+    "url": "https://www.pharmaccess.org"
+  },
+  {
+    "id": "amref",
+    "category": "implementation",
+    "icon": "🤝",
+    "name": "Amref Health Africa — Digital CHW Platform",
+    "amount": "HQ Nairobi; operating in 35 African countries",
+    "focus": "both",
+    "desc": "Amref is Africa's largest Africa-based health NGO, headquartered in Nairobi. Its Digital Health Unit manages community health worker (CHW) digital platforms across 15+ countries, including the eCHIS (Electronic Community Health Information System) in Ethiopia and Uganda. Amref Leap platform provides offline-capable mobile tools for CHWs — directly relevant to Halla community health use cases.",
+    "halla_hook": "Amref CHW networks (100,000+ workers) are a key distribution channel for Halla self-care content and triage tools. A co-design partnership would provide immediate scale.",
+    "chip_hook": "Amref climate-health programming (One Health, environmental health) and CHW networks are front-line CHIP implementation partners.",
+    "mechanism": "Co-implementation MoUs, data sharing, joint grant applications",
+    "countries": [
+      "Kenya",
+      "Ethiopia",
+      "Uganda",
+      "Tanzania",
+      "South Africa",
+      "Nigeria",
+      "Rwanda",
+      "Malawi",
+      "Zambia",
+      "DRC",
+      "Senegal",
+      "Somalia",
+      "Sudan"
+    ],
+    "action": "Engage Amref Digital Health Unit (Nairobi). Explore co-design of Halla content for CHW platforms. Submit joint proposal to USAID or FCDO Digital Health.",
+    "url": "https://amref.org"
+  },
+  {
+    "id": "kemri",
+    "category": "implementation",
+    "icon": "🤝",
+    "name": "KEMRI-Wellcome Trust Research Programme (Kenya)",
+    "amount": "Wellcome Trust-funded; one of Africa's top research institutes",
+    "focus": "both",
+    "desc": "KEMRI-Wellcome (Kilifi, Kenya) is one of Africa's premier health research institutions, producing world-class clinical trials, digital health evidence, and health policy research. It has a dedicated Health Systems and Implementation Research unit that has studied mHealth interventions extensively. A research partnership provides academic credibility, evidence generation, and access to Wellcome Trust funding for Halla.",
+    "halla_hook": "KEMRI-Wellcome can generate the clinical evidence base for Halla efficacy in East Africa — critical for funders and government scale-up decisions.",
+    "chip_hook": "KEMRI-Wellcome has active climate-health research programs (Wellcome OPOH) on heat, malaria, and climate-health outcomes in Kenya.",
+    "mechanism": "Research MoUs, co-authored publications, joint grant submissions (Wellcome, NIHR)",
+    "countries": [
+      "Kenya"
+    ],
+    "action": "Contact KEMRI-Wellcome Health Systems Research Group (Kilifi and Nairobi). Propose a co-designed implementation research study for Halla with joint Wellcome OPOH grant application.",
+    "url": "https://www.kemri-wellcome.org"
+  },
+  {
+    "id": "jhpiego",
+    "category": "implementation",
+    "icon": "🤝",
+    "name": "Jhpiego (Johns Hopkins) — Digital Health Implementation",
+    "amount": "USAID-funded; $500M+ annual programmes in Africa",
+    "focus": "halla",
+    "desc": "Jhpiego (a Johns Hopkins University affiliate) is one of the world's largest USAID-funded implementing partners for reproductive, maternal and child health. It operates in 20+ African countries and has a major digital health and mHealth implementation portfolio. Jhpiego MOMENTUM and other programs integrate digital self-care tools and CHW platforms — making it a key Halla co-implementation partner for USAID-funded programs.",
+    "halla_hook": "Jhpiego programs are direct vehicles to integrate Halla self-care tools into USAID-funded maternal and reproductive health programs across Africa.",
+    "chip_hook": "Jhpiego climate-health nexus work (increasing; explicit in 2023 strategy) creates entry points for CHIP-aligned proposals.",
+    "mechanism": "Sub-agreement under USAID prime contracts, co-design partnerships, technical collaboration",
+    "countries": [
+      "Kenya",
+      "Nigeria",
+      "Tanzania",
+      "Uganda",
+      "Ethiopia",
+      "Ghana",
+      "Rwanda",
+      "Zambia",
+      "Malawi",
+      "Mozambique",
+      "South Africa",
+      "Senegal"
+    ],
+    "action": "Contact Jhpiego Africa Director (Nairobi). Submit expression of interest to partner under USAID Digital Health cooperative agreements as technical sub-partner.",
+    "url": "https://www.jhpiego.org"
+  },
+  {
+    "id": "gca",
+    "category": "implementation",
+    "icon": "🤝",
+    "name": "Global Center on Adaptation (GCA)",
+    "amount": "Manages AAAP ($25B platform); offices in Abidjan, Nairobi, Dhaka",
+    "focus": "chip",
+    "desc": "GCA is one of the world's foremost climate adaptation organisations and manages the Africa Adaptation Acceleration Program (AAAP) with AfDB. It has won awards for investable climate adaptation solutions and operates in 40 African countries. GCA Nairobi and Abidjan offices make it an Africa-rooted partner. Its emphasis on digital climate advisory services (highlighted 2025) is directly CHIP-aligned.",
+    "halla_hook": "GCA digital climate advisory services could incorporate Halla as a community health self-care layer in climate-affected communities.",
+    "chip_hook": "GCA is the primary CHIP co-design and implementation partner — managing the continent's largest climate adaptation finance programme and explicitly prioritising digital, community-driven approaches.",
+    "mechanism": "Co-design partnerships, AAAP pipeline development, technical collaboration, joint publications",
+    "countries": [
+      "Ghana",
+      "Zambia",
+      "Kenya",
+      "Rwanda",
+      "Nigeria",
+      "Ethiopia",
+      "Tanzania",
+      "Senegal",
+      "South Africa",
+      "Mozambique",
+      "Malawi",
+      "Niger",
+      "Burkina Faso",
+      "DRC"
+    ],
+    "action": "Contact GCA Africa Regional Office (Nairobi). Propose CHIP as a flagship investable adaptation solution for AAAP pipeline. Co-design community climate-health resilience demonstration projects.",
+    "url": "https://gca.org"
+  },
+  {
+    "id": "pih",
+    "category": "implementation",
+    "icon": "🤝",
+    "name": "Partners in Health (PIH) — Community Health Systems",
+    "amount": "Operating partner; funders include BMGF, DFID, USAID",
+    "focus": "both",
+    "desc": "Partners in Health operates in Rwanda, Malawi, Lesotho, Sierra Leone, Liberia, and Eswatini with a community health systems model. PIH has integrated digital health tools (OpenMRS, CHW digital tools) into its care delivery model. Its partnerships with governments (especially Rwanda, where it co-designed the national community health system) provide policy influence and government access.",
+    "halla_hook": "PIH community health worker networks are prime channels for Halla self-care content, especially in Rwanda, Malawi, and Sierra Leone.",
+    "chip_hook": "PIH climate-health programming (environmental health, WASH) creates CHIP implementation context.",
+    "mechanism": "Co-implementation MoUs, joint grant applications (BMGF, USAID), data partnerships",
+    "countries": [
+      "Rwanda",
+      "Malawi",
+      "Lesotho",
+      "Sierra Leone",
+      "Liberia",
+      "eSwatini"
+    ],
+    "action": "Contact PIH Rwanda Country Director. Propose Halla as digital self-care complement to PIH CHW programs. Submit joint grant application to BMGF Grand Challenges Africa.",
+    "url": "https://www.pih.org"
+  },
+  {
+    "id": "chai",
+    "category": "implementation",
+    "icon": "🤝",
+    "name": "Clinton Health Access Initiative (CHAI)",
+    "amount": "$300M+ annual; 35+ country programmes",
+    "focus": "both",
+    "desc": "CHAI provides technical assistance to governments and partners to scale up evidence-based interventions. It has digital health, supply chain, and health financing programmes across East and Southern Africa. CHAI has worked on mHealth and digital health integration in Rwanda, Kenya, Malawi, Ethiopia, Uganda, and others. Its government access and health system expertise make it a high-value Halla implementation and advocacy partner.",
+    "halla_hook": "CHAI government relationships and health system expertise can facilitate Halla regulatory approvals and national eHealth policy integration.",
+    "chip_hook": "CHAI climate-health work (growing; explicit in 2023 strategy) provides entry points for CHIP co-design proposals.",
+    "mechanism": "Technical assistance agreements, co-design partnerships, government advocacy",
+    "countries": [
+      "Rwanda",
+      "Kenya",
+      "Malawi",
+      "Ethiopia",
+      "Uganda",
+      "South Africa",
+      "Tanzania",
+      "Zambia",
+      "Nigeria",
+      "Ghana",
+      "DRC",
+      "Mozambique"
+    ],
+    "action": "Contact CHAI Africa Director of Health Systems. Propose Halla as a self-care tool to complement CHAI health financing and supply chain digitisation programs.",
+    "url": "https://www.clintonhealthaccess.org"
+  }
+];
+
+// ─── FUNDING TAB RENDER ────────────────────────────────────────
+const CAT_META = {
+  'multilateral':  { label:'1. Multilateral & Bilateral Funders', color:'#2D5A3D', cls:'cat-multi' },
+  'philanthropy':  { label:'2. Philanthropy & Global Foundations', color:'#C8822A', cls:'cat-phil' },
+  'africa-funds':  { label:'3. Africa-Based Catalytic Funds', color:'#B94A2C', cls:'cat-africa' },
+  'corporate':     { label:'4. Corporate / Blended Finance / Innovation Challenges', color:'#1A6E8E', cls:'cat-corp' },
+  'implementation':{ label:'5. Implementation & Research Partners', color:'#6B5F4E', cls:'cat-impl' },
+};
+const FOCUS_TAGS = {
+  halla: `<span class="fl-tag fl-tag-halla">💙 Halla (Digital Self-Care)</span>`,
+  chip:  `<span class="fl-tag fl-tag-chip">🌿 CHIP (Climate-Health)</span>`,
+  both:  `<span class="fl-tag fl-tag-both">✦ Both Halla & CHIP</span>`,
+};
+
+function renderFunders(filter='all', query='') {
+  const container = document.getElementById('flContainer');
+  const cats = Object.keys(CAT_META);
+  let totalShown = 0;
+  let html = '';
+
+  cats.forEach(cat => {
+    if (filter !== 'all' && filter !== cat) return;
+    const meta = CAT_META[cat];
+    let items = FUNDERS.filter(f => f.category === cat);
+    if (query) {
+      const q = query.toLowerCase();
+      items = items.filter(f =>
+        f.name.toLowerCase().includes(q) ||
+        f.desc.toLowerCase().includes(q) ||
+        (f.countries||[]).some(c=>c.toLowerCase().includes(q)) ||
+        f.focus.includes(q)
+      );
+    }
+    if (!items.length) return;
+    totalShown += items.length;
+
+    html += `
+    <div class="fl-group" data-cat="${cat}">
+      <div class="fl-group-header" style="background:${meta.color};">
+        <h3>${meta.label}</h3>
+        <span class="fl-count">${items.length}</span>
+      </div>
+      <div class="fl-group-body">
+        ${items.map(f => `
+        <div class="fl-card" data-cat="${cat}">
+          <div class="fl-card-icon">${f.icon}</div>
+          <div class="fl-card-body">
+            <div class="fl-card-top">
+              <div>
+                <span class="fl-card-name">${f.name}</span>
+              </div>
+              <span class="fl-card-amount">${f.amount}</span>
+            </div>
+            <div class="fl-card-tags">
+              ${FOCUS_TAGS[f.focus]||''}
+            </div>
+            <p class="fl-card-desc">${f.desc}</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:.6rem;">
+              ${f.halla_hook?`<div style="background:rgba(26,110,142,.06);border:1px solid rgba(26,110,142,.15);border-radius:8px;padding:.55rem .7rem;font-size:.73rem;"><div style="font-weight:700;color:var(--sky);margin-bottom:.2rem;">💙 Halla Entry Point</div><div style="color:var(--ink-light);line-height:1.5;">${f.halla_hook}</div></div>`:''}
+              ${f.chip_hook?`<div style="background:rgba(45,90,61,.06);border:1px solid rgba(45,90,61,.15);border-radius:8px;padding:.55rem .7rem;font-size:.73rem;"><div style="font-weight:700;color:var(--forest);margin-bottom:.2rem;">🌿 CHIP Entry Point</div><div style="color:var(--ink-light);line-height:1.5;">${f.chip_hook}</div></div>`:''}
+            </div>
+            <div style="font-size:.72rem;color:var(--smoke);margin-bottom:.4rem;"><strong>Mechanism:</strong> ${f.mechanism}</div>
+            <div class="fl-card-countries">
+              <span style="font-size:.68rem;font-weight:600;color:var(--smoke-light);margin-right:.3rem;">Countries:</span>
+              ${(f.countries||[]).map(c=>`<span class="fl-country-pill">${c}</span>`).join('')}
+            </div>
+            <div class="fl-action">${f.action}</div>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  });
+
+  if (!totalShown) {
+    html = `<div class="fl-empty">No results found. Try adjusting your search or filter.</div>`;
+  }
+  container.innerHTML = html;
+  document.getElementById('flTotal').textContent = FUNDERS.length;
+}
+
+// Filter chips
+document.querySelectorAll('[data-filter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderFunders(btn.dataset.filter, document.getElementById('flSearch').value);
+  });
+});
+
+// Search
+let flSearchTimer;
+document.getElementById('flSearch').addEventListener('input', function() {
+  clearTimeout(flSearchTimer);
+  flSearchTimer = setTimeout(() => {
+    const activeFilter = document.querySelector('[data-filter].active')?.dataset.filter || 'all';
+    renderFunders(activeFilter, this.value.trim());
+  }, 200);
+});
+
+// Initial render of funding tab
+renderFunders();
+
+// ── INIT
+calcMetrics();drawPriorityPie();drawTopChart();populateTable();
+initCountrySelect();initComparison();drawRegionChart();
+</script>
+</body>
+</html>
